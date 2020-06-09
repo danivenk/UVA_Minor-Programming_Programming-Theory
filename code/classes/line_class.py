@@ -6,7 +6,7 @@ line_class.py defines the Line classe used for the database
 Dani van Enk, 11823526
 """
 
-from .connection_class import Connection
+import code.classes as cls
 
 
 class Line():
@@ -42,7 +42,7 @@ class Line():
     def add_connection(self, connection, max_duration):
         
         try:
-            assert type(connection) is Connection
+            assert type(connection) is cls.Connection
             max_duration = float(max_duration)
         except (AssertionError, ValueError):
             exit("LineAddConnectionError: please make sure the connection you're adding is a connction"

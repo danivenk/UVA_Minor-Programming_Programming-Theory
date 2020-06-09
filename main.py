@@ -61,7 +61,7 @@ def load_data(stations_file, connections_file):
 
 
 def output(lines, score):
-    output_writer = csv.writer(open("output.csv", "w"), delimiter=",")
+    output_writer = csv.writer(open("output/output.csv", "w"), delimiter=",")
 
     output_writer.writerow(["train", "stations"])
 

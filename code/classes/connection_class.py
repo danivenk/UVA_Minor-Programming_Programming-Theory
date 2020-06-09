@@ -6,14 +6,14 @@ connection_class.py defines the Connection class used for the database
 Dani van Enk, 11823526
 """
 
-from .station_class import Station
+import code.classes as cls
 
 
 class Connection():
 
     def __init__(self, start, end, duration):
         try:
-            assert type(start) is Station and type(end) is Station
+            assert type(start) is cls.Station and type(end) is cls.Station
             duration = float(duration)
         except (AssertionError, ValueError):
             exit("ConnectionInitError: please make sure the start and end parameters are a Station"
@@ -44,7 +44,7 @@ class Connection():
     def __repr__(self):
         return f"{self._start} - {self._end}"
 
-
+''' Kan dit niet verwijderd worden?
 class Line():
 
     def __init__(self, _id):
@@ -110,3 +110,4 @@ class Line():
                     self._connections.append(connection)
 
         return True
+'''

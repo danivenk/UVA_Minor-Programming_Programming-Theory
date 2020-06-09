@@ -6,7 +6,7 @@ station_class.py defines the Station class used for the database
 Dani van Enk, 11823526
 """
 
-from .connection_class import Connection
+import code.classes as cls
 
 
 class Station():
@@ -35,7 +35,7 @@ class Station():
     @connections.setter
     def add_connection(self, connection):
         try:
-            assert type(connection) is Connection
+            assert type(connection) is cls.Connection
         except AssertionError:
             exit("StationAddConnectionError: please make sure connection is a Connection object")
         
