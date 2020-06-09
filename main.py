@@ -11,6 +11,7 @@ import sys
 import os
 import csv
 import time
+import math
 
 
 def main(argv):
@@ -29,7 +30,25 @@ def main(argv):
     stations_file = f"data/Stations{area}.csv"
     connections_file = f"data/Connecties{area}.csv"
 
-    create_lines(stations_file, connections_file, duration, n_of_l)
+    stations, connections = load(stations_file, connections_file)
+
+    max_duration = sum(connection.duration for connection in connections)
+
+    min_no_of_l = math.ceil(max_duration/duration)
+
+    runs = None
+
+    # for n_of_l_index in range(n_of_l, min_no_of_l - 1, -1):
+    lines, score = create_lines(stations, connections, duration, n_of_l)
+
+        # if len(runs) <= 0:
+        #     runs.append((lines, score))
+        # elif runs[1] < score:
+        #     runs.append((lines, score))
+
+    # lines, score = runs[-1]
+
+    output(lines, score)
 
 
 def load_data(stations_file, connections_file):
@@ -41,12 +60,93 @@ def load_data(stations_file, connections_file):
         print()
 
 
-def create_lines(stations_file, connections_file, duration, n_of_l):
+def output(lines, score):
+    output_writer = csv.writer(open("output.csv", "w"), delimiter=",")
 
-    stations, connections = load(stations_file, connections_file)
+    output_writer.writerow(["train", "stations"])
 
-    create_random_lines(stations, connections, duration, n_of_l)
-    
+    for index, line in enumerate(lines):
+        output_writer.writerow([f"train_{index + 1}",line.stations])
+
+    output_writer.writerow(["score", score])
+
+
+def create_lines(stations, connections, duration, n_of_l):
+
+    K = 0
+    tries = 0
+    max_tries = 1E4
+    p = 0
+
+    best_run = None
+
+    time = 0
+
+    for connection in connections:
+        time += connection.duration
+
+    print(time, len(connections))
+
+    connections = sorted(connections, key=lambda x: x.duration)
+
+    for connection in connections:
+        print(connection.duration, connection.section)
+
+    while (p != 1):
+
+        lines = create_random_line(stations, connections, duration, n_of_l)
+
+        K, p = goal_function(lines, connections, n_of_l)
+
+        tries += 1
+
+        if not best_run:
+            best_run = (lines, K, p)
+        elif K > best_run[1] and p >= best_run[2]:
+            best_run = (lines, K, p)
+
+    lines, K, p = best_run
+
+    for line in lines:
+        print(line.stations)
+        print(f"Duration {int(line.duration)} min")
+    print("K-score", int(K))
+    print(
+        f"sections traversed {p*len(connections):.0f}/{len(connections):.0f}")
+    print("tries", int(tries))
+
+    return lines, K
+
+
+def goal_function(lines, connections, n_of_l):
+
+    used_connections = set()
+    Min = 0
+
+    for line in lines:
+        Min += line.duration
+        for connection in line.connections:
+            used_connections.add(connection)
+
+    p = len(used_connections)/len(connections)
+    T = n_of_l
+
+    return p * 10000 - (T * 100 + Min), p
+
+
+def calc_state_space(stations, connections, duration, n_of_l):
+
+    min_duration = min(connections, key=lambda x: x.duration).duration
+    max_connect_per_station = len(
+        max(stations.values(), key=lambda x: len(x.connections)).connections)
+    connect_per_line = duration / min_duration
+    state_space = n_of_l * (max_connect_per_station ** connect_per_line)
+
+    print("Max connections per Station", max_connect_per_station)
+    print("Minimal Duration", min_duration)
+    print("Max connections per Line", connect_per_line)
+    print("Number of Lines", n_of_l)
+    print(f"State space {state_space:1.3e}")
 
 
 if __name__ == "__main__":
@@ -59,9 +159,8 @@ if __name__ == "__main__":
         os.path.join(os.getcwd(), os.path.expanduser(__file__))))
     sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
 
-    from code.classes.data_classes import *
     from code.data_loader.load_data import load
-    from code.algorithms.create_lines import create_random_lines
+    from code.algorithms.create_lines import create_random_line
 
     start = time.time_ns()
 
@@ -69,4 +168,4 @@ if __name__ == "__main__":
 
     end = time.time_ns()
 
-    print(f"{(end-start) / 1e9}")
+    print(f"{(end-start) / 1e9} s")

@@ -11,9 +11,9 @@ import os
 import random as rd
 
 from code.data_loader.load_data import load
-from code.classes.data_classes import Line
+from code.classes.line_class import Line
 
-def create_random_lines(stations, connections, duration, n_of_l):
+def create_random_line(stations, connections, duration, n_of_l):
 
     lines = []
 
@@ -22,14 +22,9 @@ def create_random_lines(stations, connections, duration, n_of_l):
 
         random_connection = rd.choice(connections)
         while line.add_connection(random_connection, duration):
+            # print(line.duration, line.stations[-1], line.stations[0], random_connection)
             random_connection = rd.choice(connections)
 
         lines.append(line)
 
-    lines = sorted(lines, key=lambda x:x.duration)
-
-    for line in lines:
-        print(f"Duration: {line.duration}")
-        print(f"Start: {line.stations[0]} - End: {line.stations[-1]}")
-        # for station in line.stations:
-        #     print(station)
+    return lines
