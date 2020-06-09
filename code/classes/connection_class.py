@@ -2,48 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
-data_classes.py defines the classes used for the database
+connection_class.py defines the Connection class used for the database
 Dani van Enk, 11823526
 """
 
-class Station():
-
-    def __init__(self, name, x, y):
-        try:
-            assert type(name) is str
-            x = float(x)
-            y = float(y)
-        except (AssertionError, ValueError):
-            exit("StationInitError: please make sure the name is a string and x/y are floats")
-
-        self._name = name
-        self._latitude = x
-        self._longitude = y
-        self._connections = dict()
-
-    @property
-    def position(self):
-        return self._latitude, self._longitude
-
-    @property
-    def connections(self):
-        return self._connections
-
-    @connections.setter
-    def add_connection(self, connection):
-        try:
-            assert type(connection) is Connection
-        except AssertionError:
-            exit("StationAddConnectionError: please make sure connection is a Connection object")
-        
-        section = connection.section
-
-        for station in section:
-            if station is not self:
-                self._connections[connection] = station
-
-    def __repr__(self):
-        return self._name
+from .station_class import Station
 
 
 class Connection():
@@ -108,6 +71,10 @@ class Line():
     def stations(self):
         return self._stations
 
+    @property
+    def connections(self):
+        return self._connections
+
     def add_connection(self, connection, max_duration):
         
         try:
@@ -128,6 +95,11 @@ class Line():
                 current_start = self._stations[-1]
                 current_end = self._stations[0]
 
+                # if connection in self._connections:
+                #     return True
+                # elif len(current_start.connections) == 1 and len(current_end.connections) == 1:
+                #     return False
+                
                 if connection in current_start.connections:
                     next_station = current_start.connections[connection]
                     self._stations.append(next_station)
