@@ -48,6 +48,8 @@ def main(argv):
 
     # lines, score = runs[-1]
 
+    plot_map(stations, connections, lines, area)
+
     output(lines, score)
 
 
@@ -161,6 +163,7 @@ if __name__ == "__main__":
 
     from code.data_loader.load_data import load
     from code.algorithms.create_lines import create_random_line
+    from code.plotting.plot_lines import plot_map
 
     start = time.time_ns()
 
