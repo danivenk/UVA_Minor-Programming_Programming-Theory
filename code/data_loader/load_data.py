@@ -9,8 +9,7 @@ Dani van Enk, 11823526
 
 # used imports
 import csv
-from code.classes.station_class import Station
-from code.classes.connection_class import Connection
+from code.classes import Station, Connection
 
 
 def load(stations_file, connections_file):

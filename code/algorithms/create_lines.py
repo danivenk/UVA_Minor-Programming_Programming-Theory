@@ -11,7 +11,7 @@ import os
 import random as rd
 
 from code.data_loader.load_data import load
-from code.classes.line_class import Line
+from code.classes import Line
 
 def create_random_line(stations, connections, duration, n_of_l):
 

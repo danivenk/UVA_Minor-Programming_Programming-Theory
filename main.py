@@ -153,14 +153,6 @@ def calc_state_space(stations, connections, duration, n_of_l):
 
 if __name__ == "__main__":
 
-
-    # import from parent directory
-    #   https://stackoverflow.com/a/16985066
-    PACKAGE_PARENT = '..'
-    SCRIPT_DIR = os.path.dirname(os.path.realpath(
-        os.path.join(os.getcwd(), os.path.expanduser(__file__))))
-    sys.path.append(os.path.normpath(os.path.join(SCRIPT_DIR, PACKAGE_PARENT)))
-
     from code.data_loader.load_data import load
     from code.algorithms.create_lines import create_random_line
     from code.plotting.plot_lines import plot_map

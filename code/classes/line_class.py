@@ -6,10 +6,29 @@ line_class.py defines the Line classe used for the database
 Dani van Enk, 11823526
 """
 
+# import used classes
 import code.classes as cls
 
 
 class Line():
+    """
+    the Line class defines a combination of connections (and thus also stations)
+
+    paramters:
+        id              - is the lineid;
+        connections     - all connections present in this line;
+        stations        - the stations of this line in the correct order;
+
+    properties:
+        duration        - returns duration of this line;
+        no_of_stations  - returns number of station in this line;
+        stations        - returns stations list of this line;
+        connections     - returns connections list of this line;
+
+    method:
+        add_connection - adds connection to line if valid
+            true if added correctly false if not;
+    """
 
     def __init__(self, _id):
         self._id = _id
