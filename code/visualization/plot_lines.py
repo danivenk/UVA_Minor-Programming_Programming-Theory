@@ -77,14 +77,15 @@ def gpd_map(area, path="./data/shapefile/NLD_adm1.dbf"):
     else:
         # Try to create a lowres GeoDataFrame with given area name
         world = gpd.read_file(gpd.datasets.get_path("naturalearth_lowres"))
-        if world.name.str.contains(area).sum() > 0:
+        if world.name.str.contains(area).sum() < 1:
+            exit("No match to that area found. Try other name.")
+        else:
             if world.name.str.contains(area).sum() == 1:
                 print("Low Resolution Shapefile found.")
                 gdf = world.name.str.contains(area)
             elif world.name.str.contains(area).sum() > 1:
                 print(f"{world.name.str.contains(area).sum()} areas with that name found, return first result in Low Resolution. \n Try other area name.")
-        else:
-            exit("No match to that area found. Try other name.")
+            
 
     return gdf
             
