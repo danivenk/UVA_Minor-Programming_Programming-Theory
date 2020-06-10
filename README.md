@@ -10,7 +10,7 @@ In the [RailNL](https://theorie.mprog.nl/cases/railnl) case, we're trying to opt
 
 The quality of the solution can be measured using the following formula:
 
-<img src="https://render.githubusercontent.com/render/math?math=Q = p \cdot 10000 -(#Lines \cdot 100 + TotalTime)">
+<img src="https://render.githubusercontent.com/render/math?math=Q = p \cdot 10000 -(\#Lines \cdot 100 + TotalTime)">
 
 Where *p* is the percentage of the connections covered (between 0 and 1), *#Lines* is the number of lines used in the solution and *TotalTime* is the sum of the times of every line.
 
