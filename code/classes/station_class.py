@@ -26,7 +26,7 @@ class Station():
 
     @property
     def position(self):
-        return self._latitude, self._longitude
+        return self._longitude, self._latitude
 
     @property
     def connections(self):
