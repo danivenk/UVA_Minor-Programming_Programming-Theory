@@ -21,7 +21,7 @@ class Station():
 
     properties:
         position        - returns the longitude and latitude of the station;
-        connections     - returns all all connections of this station;
+        connections     - returns all connections of this station;
             setter: connection is of type Conenction
     """
 
@@ -29,7 +29,7 @@ class Station():
         """
         initialize a station
 
-        paramters:
+        parameters:
             name    - name of the station;
             x       - longitude position of the station;
             y       - latitude position of the station;
@@ -44,7 +44,7 @@ class Station():
             exit("StationInitError: please make sure the name is a string "
                  "and x/y are floats")
 
-        # define name, longitude, latitude and connections attirbutes
+        # define name, longitude, latitude and connections attributes
         self._name = name
         self._longitude = x
         self._latitude = y
