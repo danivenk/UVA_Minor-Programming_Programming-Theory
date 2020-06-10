@@ -14,13 +14,13 @@ import math
 
 def plot_map(stations, connections, lines, area, output_path='./output/'):
     # Create Figure and Axe
-    fig = plt.figure()  
+    fig = plt.figure()
     fig, ax = plt.subplots(figsize=(25,10)) 
     plt.axis('off')
 
     # Setup
     if area == 'Holland':
-        land_color = '#00aaee'
+        land_color = '#00AAEE'
         marker_size = 20
         line_size = 2
     
@@ -55,7 +55,8 @@ def plot_map(stations, connections, lines, area, output_path='./output/'):
     plt.savefig(f'{output_path}Map-{area}.png', dpi=300, format='png', transparent=True)
     print(f'Map-{area} is created.')
 
-def gpd_map(area,path='./data/shapefile/NLD_adm1.dbf'):
+def gpd_map(area, path='./data/shapefile/NLD_adm1.dbf'):
+
     if isinstance(area,str):
         print(f'Searching for map of {area}.')
         
