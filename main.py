@@ -84,15 +84,7 @@ def create_lines(stations, connections, duration, n_of_l):
 
     time = 0
 
-    for connection in connections:
-        time += connection.duration
-
-    print(time, len(connections))
-
     connections = sorted(connections, key=lambda x: x.duration)
-
-    for connection in connections:
-        print(connection.duration, connection.section)
 
     while (p != 1):
 
@@ -110,7 +102,7 @@ def create_lines(stations, connections, duration, n_of_l):
     lines, K, p = best_run
 
     for line in lines:
-        print(line.stations)
+        print(", ".join(str(station) for station in line.stations))
         print(f"Duration {int(line.duration)} min")
     print("K-score", int(K))
     print(

@@ -54,7 +54,9 @@ class Connection():
 
     @property
     def duration(self):
-        """returns the duration of this connection"""
+        """
+        returns the duration of this connection
+        """
 
         return self._duration
 
@@ -75,7 +77,9 @@ class Connection():
 
     @property
     def section(self):
-        """return the start/end station tuple"""
+        """
+        return the start/end station tuple
+        """
 
         return self._start, self._end
 

@@ -52,13 +52,17 @@ class Station():
 
     @property
     def position(self):
-        """return the longitude/latitude position tuple"""
+        """
+        return the longitude/latitude position tuple
+        """
 
         return self._longitude, self._latitude
 
     @property
     def connections(self):
-        """return the connections of this station"""
+        """
+        return the connections of this station
+        """
 
         return self._connections
 

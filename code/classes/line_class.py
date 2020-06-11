@@ -31,16 +31,31 @@ class Line():
     """
 
     def __init__(self, _id):
+        """
+        initialize the Line class
+
+        parameter:
+            id - Line-ID;
+        """
+        
         self._id = _id
         self._connections = []
         self._stations = []
 
     @property
     def duration(self):
+        """
+        returns the duration of this line
+        """
+
+        # predefine the duration to 0
         _duration = 0
+
+        # loop over all the connections of this line and add to the duration
         for connection in self._connections:
             _duration += connection.duration
         
+        # make sure the duration is 0 or more
         if _duration < 0:
             raise ValueError(f"{_duration} is smaller than 0")
         else:
@@ -48,41 +63,66 @@ class Line():
 
     @property
     def no_of_stations(self):
+        """
+        return the number of stations of this line
+        """
+
         return len(self._stations)
 
     @property
     def stations(self):
+        """
+        return the stations list
+        """
+        
         return self._stations
 
     @property
     def connections(self):
+        """
+        return the connections list
+        """
+
         return self._connections
 
     def add_connection(self, connection, max_duration):
+        """
+        adds a connection to the connections list if the connection is valid
+
+        parameters:
+            connection      - connection to be added;
+            max_duration    - max duration of this line;
+
+        returns True if the ###########################
+        """
         
+        # make sure connection is of type Conenction and max_duration is a number
         try:
             assert type(connection) is cls.Connection
             max_duration = float(max_duration)
         except (AssertionError, ValueError):
-            exit("LineAddConnectionError: please make sure the connection you're adding is a connction"
-                 "object\n and max_duration is a number")
+            exit("LineAddConnectionError: please make sure the connection "
+                 "you're adding is a connction object\n "
+                 "and max_duration is a number")
 
+        # check if the connection to be added makes the duration more than max
         if self.duration + connection.duration > max_duration:
             return False
         else:
+
+            # if line is empty add whole connection
             if len(self._stations) == 0:
                 for station in connection.section:
                     self._stations.append(station)
                 self._connections.append(connection)
+            
+            # if not add it where it's posisble
             else:
+                # define the stations at the end of the current line
                 current_start = self._stations[-1]
                 current_end = self._stations[0]
-
-                # if connection in self._connections:
-                #     return True
-                # elif len(current_start.connections) == 1 and len(current_end.connections) == 1:
-                #     return False
                 
+                # check if it must be added to the start or at the end of the line
                 if connection in current_start.connections:
                     next_station = current_start.connections[connection]
                     self._stations.append(next_station)
