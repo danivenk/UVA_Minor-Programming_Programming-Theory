@@ -8,7 +8,6 @@ Dani van Enk, 11823526
 
 # import used classes
 import code.classes as cls
-from code.debug.connections import print_connections, check_validity
 
 
 class Line():

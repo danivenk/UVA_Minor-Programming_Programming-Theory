@@ -16,7 +16,6 @@ from collections import defaultdict
 from code.data_loader.load_data import load
 from code.classes import Line
 from code.function.objective import goal_function
-from code.debug.connections import print_connections
 
 class Random_Connections():
 
@@ -69,8 +68,8 @@ class Random_Connections():
                 goal_function_result = goal_function(lines, self._connections, n_of_l)
 
                 self._result.append((lines,) + goal_function(lines, self._connections, n_of_l))
-                self._score[run].append(run)
-                self._score[score].append(goal_function_result[0]) 
+                self._scores["run"].append(run)
+                self._scores["score"].append(goal_function_result[0]) 
 
             self._result = sorted(self._result, key=lambda x: x[1], reverse=True)[:5]
 
