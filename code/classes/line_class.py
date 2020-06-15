@@ -8,6 +8,7 @@ Dani van Enk, 11823526
 
 # import used classes
 import code.classes as cls
+from code.debug.connections import print_connections, check_validity
 
 
 class Line():
@@ -85,6 +86,32 @@ class Line():
 
         return self._connections
 
+    def get_begin_end_options(self):
+
+        if len(self._stations) == 0:
+            return None
+
+        # define the stations at the end of the current line
+        self._current_start = self._stations[0]
+        self._current_end = self._stations[-1]
+
+        return self._current_start.connections, self._current_end.connections
+
+    def get_all_options(self):
+
+        if len(self._stations) == 0:
+            return None
+
+        # define the stations at the end of the current line
+        self._current_start = self._stations[0]
+        self._current_end = self._stations[-1]
+
+        connections = self._current_start.connections.copy()
+        connections.update(self._current_end.connections)
+
+
+        return connections
+
     def add_connection(self, connection, max_duration):
         """
         adds a connection to the connections list if the connection is valid
@@ -118,18 +145,24 @@ class Line():
             
             # if not add it where it's posisble
             else:
-                # define the stations at the end of the current line
-                current_start = self._stations[-1]
-                current_end = self._stations[0]
+                current_start_options, current_end_options = self.get_begin_end_options()
                 
-                # check if it must be added to the start or at the end of the line
-                if connection in current_start.connections:
-                    next_station = current_start.connections[connection]
+                # for connection in current_end_options:
+                #     print(self._current_end, connection)
+
+                if connection in current_end_options:
+                    next_station = current_end_options[connection]
                     self._stations.append(next_station)
                     self._connections.append(connection)
-                elif connection in current_end.connections:
-                    previous_station = current_end.connections[connection]
+
+                elif connection in current_start_options:
+                    previous_station = current_start_options[connection]
                     self._stations.insert(0, previous_station)
-                    self._connections.append(connection)
+                    self._connections.insert(0, connection)
+                else:
+                    return False
 
         return True
+
+    def __repr__(self):
+        return f"ID {self._id}"

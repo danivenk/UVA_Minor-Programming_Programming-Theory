@@ -75,31 +75,9 @@ def output(lines, score):
 
 def create_lines(stations, connections, duration, n_of_l):
 
-    K = 0
-    tries = 0
-    max_tries = 1E4
-    p = 0
+    random = Random_Connections(connections, duration, n_of_l)
 
-    best_run = None
-
-    time = 0
-
-    connections = sorted(connections, key=lambda x: x.duration)
-
-    while (p != 1):
-
-        lines = create_random_line(stations, connections, duration, n_of_l)
-
-        K, p = goal_function(lines, connections, n_of_l)
-
-        tries += 1
-
-        if not best_run:
-            best_run = (lines, K, p)
-        elif K > best_run[1] and p >= best_run[2]:
-            best_run = (lines, K, p)
-
-    lines, K, p = best_run
+    lines, K, p = random.run(10000)[0]
 
     for line in lines:
         print(", ".join(str(station) for station in line.stations))
@@ -107,25 +85,8 @@ def create_lines(stations, connections, duration, n_of_l):
     print("K-score", int(K))
     print(
         f"sections traversed {p*len(connections):.0f}/{len(connections):.0f}")
-    print("tries", int(tries))
 
     return lines, K
-
-
-def goal_function(lines, connections, n_of_l):
-
-    used_connections = set()
-    Min = 0
-
-    for line in lines:
-        Min += line.duration
-        for connection in line.connections:
-            used_connections.add(connection)
-
-    p = len(used_connections)/len(connections)
-    T = n_of_l
-
-    return p * 10000 - (T * 100 + Min), p
 
 
 def calc_state_space(stations, connections, duration, n_of_l):
@@ -146,7 +107,7 @@ def calc_state_space(stations, connections, duration, n_of_l):
 if __name__ == "__main__":
 
     from code.data_loader.load_data import load
-    from code.algorithms.create_lines import create_random_line
+    from code.algorithms.random import Random_Connections
     from code.visualization.plot_lines import plot_map
 
     start = time.time_ns()

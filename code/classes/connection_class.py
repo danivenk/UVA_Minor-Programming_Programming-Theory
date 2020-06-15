@@ -84,15 +84,15 @@ class Connection():
         return self._start, self._end
 
     def __repr__(self):
-        """
-        return the correct representation of the Connection class
-        """
+    #     """
+    #     return the correct representation of the Connection class
+    #     """
         
-        return f"Section: {self._start} - {self._end} (Duration: {self._duration})"
+    #     return f"Section: {self._start} - {self._end} (Duration: {self._duration})"
     
-    def __str__(self):
-        """
-        return the string format of the Connection class
-        """
+    # def __str__(self):
+    #     """
+    #     return the string format of the Connection class
+    #     """
 
         return f"{self._start} - {self._end}"

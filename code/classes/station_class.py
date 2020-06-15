@@ -64,6 +64,10 @@ class Station():
         return the connections of this station
         """
 
+        # for connection, stationto in self._connections.items():
+        #     if self == stationto:
+        #         print("from: ", self, "to: ", stationto)
+
         return self._connections
 
     @connections.setter
@@ -95,16 +99,16 @@ class Station():
                 self._connections[connection] = station
 
     def __repr__(self):
-        """
-        return the correct representation of the Station class
-        """
+    #     """
+    #     return the correct representation of the Station class
+    #     """
 
-        return f"{self._name} at position " \
-            f"(long: {self._longitude}, lat: {self._latitude})"
+    #     return f"{self._name} at position " \
+    #         f"(long: {self._longitude}, lat: {self._latitude})"
     
-    def __str__(self):
-        """
-        return the string format of the Station class
-        """
+    # def __str__(self):
+    #     """
+    #     return the string format of the Station class
+    #     """
 
         return self._name
