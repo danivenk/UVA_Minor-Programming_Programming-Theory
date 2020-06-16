@@ -25,29 +25,29 @@ class Station():
             setter: connection is of type Conenction
     """
 
-    def __init__(self, name, x, y):
+    def __init__(self, name, lat, long):
         """
         initialize a station
 
         paramters:
             name    - name of the station;
-            x       - longitude position of the station;
-            y       - latitude position of the station;
+            lat     - latitude position of the station;
+            long    - longitude position of the station;
         """
 
         # make sure x/y are floats and name is a string
         try:
             assert type(name) is str
-            x = float(x)
-            y = float(y)
+            lat = float(lat)
+            long = float(long)
         except (AssertionError, ValueError):
             exit("StationInitError: please make sure the name is a string "
-                 "and x/y are floats")
+                 "and long/lat are floats")
 
         # define name, longitude, latitude and connections attirbutes
         self._name = name
-        self._longitude = x
-        self._latitude = y
+        self._longitude = long
+        self._latitude = lat
         self._connections = dict()
 
     @property
@@ -112,3 +112,6 @@ class Station():
     #     """
 
         return self._name
+
+    def __eq__(self, other):
+        return self._name == other
