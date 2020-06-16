@@ -7,10 +7,10 @@ Dani van Enk, 11823526
 """
 
 
-def goal_function(lines, connections, n_of_l):
+def goal_function(lines, connections, n_of_l, penalty=0):
 
     used_connections = set()
-    Min = 0
+    Min = penalty
 
     for line in lines:
         Min += line.duration

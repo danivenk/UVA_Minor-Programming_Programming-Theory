@@ -107,7 +107,7 @@ def calc_state_space(stations, connections, duration, n_of_l):
 if __name__ == "__main__":
 
     from code.data_loader.load_data import load
-    from code.algorithms.random import Random_Connections
+    from code.algorithms import Random_Connections, Random_Relax_Connections
     from code.visualization.plot_lines import plot_map
 
     start = time.time_ns()
