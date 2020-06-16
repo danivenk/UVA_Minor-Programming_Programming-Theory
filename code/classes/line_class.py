@@ -41,6 +41,7 @@ class Line():
         self._id = _id
         self._connections = []
         self._stations = []
+        self._penalty = 0
 
     @property
     def duration(self):
@@ -84,6 +85,19 @@ class Line():
         """
 
         return self._connections
+
+    @property
+    def penalty(self):
+        return self._penalty
+
+    def add_to_penalty(self, value):
+
+        try:
+            float(value)
+        except ValueError:
+            exit("AdditionError: make sure value is a number")
+
+        self._penalty += value
 
     def get_begin_end_options(self):
 
