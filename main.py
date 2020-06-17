@@ -8,10 +8,8 @@ Dani van Enk, 11823526
 
 # used imports
 import sys
-import os
 import csv
 import time
-import math
 
 
 def main(argv):
@@ -32,21 +30,7 @@ def main(argv):
 
     stations, connections = load(stations_file, connections_file)
 
-    max_duration = sum(connection.duration for connection in connections)
-
-    min_no_of_l = math.ceil(max_duration/duration)
-
-    runs = None
-
-    # for n_of_l_index in range(n_of_l, min_no_of_l - 1, -1):
     lines, score = create_lines(stations, connections, duration, n_of_l)
-
-        # if len(runs) <= 0:
-        #     runs.append((lines, score))
-        # elif runs[1] < score:
-        #     runs.append((lines, score))
-
-    # lines, score = runs[-1]
 
     plot_map(stations, connections, lines, area)
 
@@ -68,7 +52,7 @@ def output(lines, score):
     output_writer.writerow(["train", "stations"])
 
     for index, line in enumerate(lines):
-        output_writer.writerow([f"train_{index + 1}",line.stations])
+        output_writer.writerow([f"train_{index + 1}", line.stations])
 
     output_writer.writerow(["score", score])
 
@@ -77,7 +61,7 @@ def create_lines(stations, connections, duration, n_of_l, algorithm="greedy"):
 
     random = Random_Connections(connections, duration, n_of_l)
     greedy = Greedy(connections, duration, n_of_l)
-    
+
     if algorithm == "random":
         lines, K, p = random.run(10000)[0]
     elif algorithm == "greedy":
@@ -111,7 +95,7 @@ def calc_state_space(stations, connections, duration, n_of_l):
 if __name__ == "__main__":
 
     from code.data_loader.load_data import load
-    from code.algorithms import Random_Connections, Random_Relax_Connections
+    from code.algorithms import Random_Connections
     from code.algorithms.greedy import Greedy
     from code.visualization.plot_lines import plot_map
 

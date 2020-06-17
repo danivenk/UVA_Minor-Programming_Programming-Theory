@@ -40,8 +40,8 @@ class Connection():
             assert type(start) is clss.Station and type(end) is clss.Station
             duration = float(duration)
         except (AssertionError, ValueError):
-            exit("ConnectionInitError: please make sure the start and end parameters are a Station"
-                 " object\n and duration is a number")
+            exit("ConnectionInitError: please make sure the start and end "
+                 "parameters are a Station object\n and duration is a number")
 
         # define start, end and duration attributes
         self._start = start
@@ -84,15 +84,16 @@ class Connection():
         return self._start, self._end
 
     def __repr__(self):
-    #     """
-    #     return the correct representation of the Connection class
-    #     """
-        
-    #     return f"Section: {self._start} - {self._end} (Duration: {self._duration})"
-    
-    # def __str__(self):
-    #     """
-    #     return the string format of the Connection class
-    #     """
+        """
+        return the correct representation of the Connection class
+        """
+
+        return f"Section: {self._start} - {self._end} " \
+               f"(Duration: {self._duration})"
+
+    def __str__(self):
+        """
+        return the string format of the Connection class
+        """
 
         return f"{self._start} - {self._end}"

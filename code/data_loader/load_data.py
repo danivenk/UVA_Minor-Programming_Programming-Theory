@@ -39,7 +39,8 @@ def load(stations_file, connections_file):
     except FileNotFoundError:
         exit(f"{PATH_Connections} not found")
 
-    stations = {name: Station(name, lat, long) for name, lat, long in stations_reader}
+    stations = {name: Station(name, lat, long)
+                for name, lat, long in stations_reader}
     connections = [Connection(stations[start], stations[end], duration)
                    for start, end, duration in connections_reader]
 

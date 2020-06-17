@@ -6,16 +6,14 @@ create_lines.py creates lines according to the given constraints
 Dani van Enk, 11823526
 """
 
-import sys
-import os
 import random as rd
 import math
 
 from collections import defaultdict
 
-from code.data_loader.load_data import load
 from code.classes import Line, Connection
 from code.function.objective import goal_function
+
 
 class Random_Relax_Connections():
 
@@ -23,8 +21,8 @@ class Random_Relax_Connections():
         self._connections = connections
         self._max_duration = max_duration
         self._max_n_of_l = max_n_of_l
-        self._min_n_of_l = math.ceil(sum(connection.duration for connection \
-            in connections)/max_duration)
+        self._min_n_of_l = math.ceil(sum(connection.duration for connection
+                                     in connections)/max_duration)
         self._result = []
         self._scores = defaultdict(list)
 
@@ -35,16 +33,16 @@ class Random_Relax_Connections():
     @property
     def scores(self):
         return self._scores
-    
+
     def create_line(self, uid):
 
         line = Line(uid)
 
         line.add_connection(rd.choice(self._connections), self._max_duration)
 
-        while (line.duration + min(line.get_all_options().keys(), \
-            key=lambda x: x.duration).duration <= self._max_duration):
-            
+        while (line.duration + min(line.get_all_options().keys(),
+               key=lambda x: x.duration).duration <= self._max_duration):
+
             options = rd.choice(line.get_begin_end_options())
 
             connection = rd.choice(list(options.keys()))
@@ -58,9 +56,11 @@ class Random_Relax_Connections():
         try:
             assert type(line) is Line and type(connection) is Connection
         except AssertionError:
-            exit("PenaltyCheckError: Make sure line is of type Line and connection is of type Connection")
-        
-        if line.connections[-1] == connection or line.connections[0] == connection:
+            exit("PenaltyCheckError: Make sure line is of type Line and "
+                 "connection is of type Connection")
+
+        if line.connections[-1] == connection or \
+                line.connections[0] == connection:
             line.add_to_penalty(1000)
 
     def run(self, repeat=1):
@@ -68,7 +68,8 @@ class Random_Relax_Connections():
         try:
             float(repeat)
         except ValueError:
-            exit("RunError: please make sure you've entered a number for the number of repeats")
+            exit("RunError: please make sure you've entered a number for "
+                 "the number of repeats")
 
         for run in range(repeat):
             for n_of_l in range(self._max_n_of_l, self._min_n_of_l - 1, -1):
@@ -82,12 +83,14 @@ class Random_Relax_Connections():
 
                     total_penalty += line.penalty
 
-                goal_function_result = goal_function(lines, self._connections, n_of_l, total_penalty)
+                goal_function_result = goal_function(lines, self._connections,
+                                                     n_of_l, total_penalty)
 
                 self._result.append((lines,) + goal_function_result)
                 self._scores["run"].append(run)
-                self._scores["score"].append(goal_function_result[0]) 
+                self._scores["score"].append(goal_function_result[0])
 
-            self._result = sorted(self._result, key=lambda x: x[1], reverse=True)[:5]
+            self._result = sorted(self._result, key=lambda x: x[1],
+                                  reverse=True)[:5]
 
         return self._result

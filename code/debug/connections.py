@@ -11,6 +11,7 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+
 def print_connections(station):
     print(f"{bcolors.HEADER}{station}{bcolors.ENDC}")
     for connection, station_ in station.connections.items():

@@ -85,7 +85,7 @@ class Station():
         except AssertionError:
             exit("StationAddConnectionError: please make sure connection is "
                  "a Connection object")
-        
+
         # define the section of this connection
         section = connection.section
 
@@ -99,19 +99,19 @@ class Station():
                 self._connections[connection] = station
 
     def __repr__(self):
-    #     """
-    #     return the correct representation of the Station class
-    #     """
+        """
+        return the correct representation of the Station class
+        """
 
-    #     return f"{self._name} at position " \
-    #         f"(long: {self._longitude}, lat: {self._latitude})"
-    
-    # def __str__(self):
-    #     """
-    #     return the string format of the Station class
-    #     """
+        return f"{self._name} at position " \
+            f"(long: {self._longitude}, lat: {self._latitude})"
+
+    def __str__(self):
+        """
+        return the string format of the Station class
+        """
 
         return self._name
 
-    def __eq__(self, other):
-        return self._name == other
+    # def __eq__(self, other):
+    #     return self._name == other

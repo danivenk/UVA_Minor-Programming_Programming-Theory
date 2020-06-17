@@ -12,7 +12,8 @@ import code.classes as cls
 
 class Line():
     """
-    the Line class defines a combination of connections (and thus also stations)
+    the Line class defines a combination of connections
+        (and thus also stations)
 
     paramters:
         id              - is the lineid;
@@ -37,7 +38,7 @@ class Line():
         parameter:
             id - Line-ID;
         """
-        
+
         self._id = _id
         self._connections = []
         self._stations = []
@@ -55,7 +56,7 @@ class Line():
         # loop over all the connections of this line and add to the duration
         for connection in self._connections:
             _duration += connection.duration
-        
+
         # make sure the duration is 0 or more
         if _duration < 0:
             raise ValueError(f"{_duration} is smaller than 0")
@@ -75,7 +76,7 @@ class Line():
         """
         return the stations list
         """
-        
+
         return self._stations
 
     @property
@@ -122,7 +123,6 @@ class Line():
         connections = self._current_start.connections.copy()
         connections.update(self._current_end.connections)
 
-
         return connections
 
     def add_connection(self, connection, max_duration):
@@ -133,10 +133,10 @@ class Line():
             connection      - connection to be added;
             max_duration    - max duration of this line;
 
-        returns True if the ###########################
+        returns True if the connection was successfully added and false if not
         """
-        
-        # make sure connection is of type Conenction and max_duration is a number
+
+        # check if connection is type Conenction and max_duration is a number
         try:
             assert type(connection) is cls.Connection
             max_duration = float(max_duration)
@@ -155,11 +155,12 @@ class Line():
                 for station in connection.section:
                     self._stations.append(station)
                 self._connections.append(connection)
-            
+
             # if not add it where it's posisble
             else:
-                current_start_options, current_end_options = self.get_begin_end_options()
-                
+                current_start_options, current_end_options = \
+                    self.get_begin_end_options()
+
                 # for connection in current_end_options:
                 #     print(self._current_end, connection)
 
