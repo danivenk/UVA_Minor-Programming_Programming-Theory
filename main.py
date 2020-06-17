@@ -73,11 +73,15 @@ def output(lines, score):
     output_writer.writerow(["score", score])
 
 
-def create_lines(stations, connections, duration, n_of_l):
+def create_lines(stations, connections, duration, n_of_l, algorithm="greedy"):
 
     random = Random_Connections(connections, duration, n_of_l)
-
-    lines, K, p = random.run(10000)[0]
+    greedy = Greedy(connections, duration, n_of_l)
+    
+    if algorithm == "random":
+        lines, K, p = random.run(10000)[0]
+    elif algorithm == "greedy":
+        lines, K, p = greedy.run(10000)[0]
 
     for line in lines:
         print(", ".join(str(station) for station in line.stations))
@@ -108,6 +112,7 @@ if __name__ == "__main__":
 
     from code.data_loader.load_data import load
     from code.algorithms import Random_Connections, Random_Relax_Connections
+    from code.algorithms.greedy import Greedy
     from code.visualization.plot_lines import plot_map
 
     start = time.time_ns()
