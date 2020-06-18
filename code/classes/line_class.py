@@ -100,6 +100,15 @@ class Line():
 
         self._penalty += value
 
+    def update_penalty(self, value):
+
+        try:
+            float(value)
+        except ValueError:
+            exit("AdditionError: make sure value is a number")
+
+        self._penalty = value
+
     def get_begin_end_options(self):
 
         if len(self._stations) == 0:
@@ -125,7 +134,7 @@ class Line():
 
         return connections
 
-    def add_connection(self, connection, max_duration):
+    def add_connection(self, connection, max_duration, starting=None):
         """
         adds a connection to the connections list if the connection is valid
 
@@ -152,8 +161,15 @@ class Line():
 
             # if line is empty add whole connection
             if len(self._stations) == 0:
-                for station in connection.section:
-                    self._stations.append(station)
+                
+                # if starting station is defined set starting station
+                if starting is None:
+                    for station in connection.section:
+                        self._stations.append(station)
+                else:
+                    self._stations.append(starting)
+                    self._stations.append(connection.other(starting))
+
                 self._connections.append(connection)
 
             # if not add it where it's posisble
