@@ -4,3 +4,4 @@ geopandas >= 0.7.0
 descartes >= 1.1.0
 wcag-contrast-ratio
 pillow
+geopy
