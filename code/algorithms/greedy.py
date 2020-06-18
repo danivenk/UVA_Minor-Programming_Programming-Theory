@@ -7,32 +7,13 @@ Michael Faber, 6087582
 """
 
 import random as rd
-import math
 import copy
-from collections import defaultdict
 
 from code.classes import Line
-from code.function.objective import goal_function
+from code.algorithms.random import Random_Connections
 
 
-class Greedy():
-
-    def __init__(self, connections, max_duration, max_n_of_l):
-        self._connections = connections
-        self._max_duration = max_duration
-        self._max_n_of_l = max_n_of_l
-        self._min_n_of_l = math.ceil(sum(connection.duration for connection
-                                     in connections)/max_duration)
-        self._result = []
-        self._scores = defaultdict(list)
-
-    @property
-    def result(self):
-        return self._result
-
-    @property
-    def scores(self):
-        return self._scores
+class Greedy(Random_Connections):
 
     def create_line(self, uid, connection_list):
         '''
@@ -116,12 +97,9 @@ class Greedy():
                     else:
                         lines.append(line)
 
-                goal_function_result = \
-                    goal_function(lines, self._connections, n_of_l)
+                goal_function_result = self.goal_function(lines)
 
-                self._result.append((lines,) +
-                                    goal_function(lines,
-                                                  self._connections, n_of_l))
+                self._result.append((lines,) + goal_function_result)
                 self._scores["run"].append(run)
                 self._scores["score"].append(goal_function_result[0])
 

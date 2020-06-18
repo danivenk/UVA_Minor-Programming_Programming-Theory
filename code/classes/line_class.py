@@ -92,7 +92,7 @@ class Line():
         return self._penalty
 
     @penalty.setter
-    def set_penalty(self, value):
+    def penalty(self, value):
 
         try:
             float(value)
@@ -109,6 +109,10 @@ class Line():
             exit("AdditionError: make sure value is a number")
 
         self._penalty += value
+
+    @property
+    def begin_end_station_index(self):
+        return (0, 1), (-1, -1)
 
     def get_begin_end_options(self):
 
@@ -162,7 +166,7 @@ class Line():
 
             # if line is empty add whole connection
             if len(self._stations) == 0:
-                
+
                 # if starting station is defined set starting station
                 if starting_station is None:
                     for station in connection.section:

@@ -12,7 +12,6 @@ import math
 from collections import defaultdict
 
 from code.classes import Line, Connection
-from code.function.objective import goal_function
 
 
 class Random_Relax_Connections():
@@ -83,8 +82,7 @@ class Random_Relax_Connections():
 
                     total_penalty += line.penalty
 
-                goal_function_result = goal_function(lines, self._connections,
-                                                     n_of_l, total_penalty)
+                goal_function_result = self.goal_function(lines, total_penalty)
 
                 self._result.append((lines,) + goal_function_result)
                 self._scores["run"].append(run)
