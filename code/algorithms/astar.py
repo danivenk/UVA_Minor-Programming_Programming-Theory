@@ -14,7 +14,9 @@ from code.classes import Line
 
 class A_Star():
 
-    def __init__(self, connections, stations, max_duration, number_of_results):
+    def __init__(self, connections, stations,
+                 max_duration, number_of_results=1):
+
         self._connections = connections
         self._stations = stations
         self._max_duration = max_duration
@@ -25,6 +27,10 @@ class A_Star():
     @property
     def result(self):
         return self._result
+
+    @result.setter
+    def set_result(self, value):
+        self._result = value
 
     def time_per_km(self):
         """
@@ -68,73 +74,75 @@ class A_Star():
         c = 0
         uid = 0
 
-        # Set variable
+        # Set variables
         speed = self.time_per_km()
-
-        # Create empty line with minimal duration
         total_duration = self.station_distance(station1, station2) * speed
-        line = Line(uid)
-        self._choices[line] = total_duration
 
-        # While there are still choices
-        while self._choices:
+        # If total_duration is shorter or equal to max_duration, run function
+        if total_duration <= self._max_duration:
 
-            # Choose the option with lowest corrected duration
-            best_option = min(self._choices, key=self._choices.get)
+            # Create empty line with minimal duration
+            line = Line(uid)
+            self._choices[line] = total_duration
 
-            # If it an empty line add first connection
-            if uid == 0:
+            # While there are still choices
+            while self._choices:
 
-                # Create a new line for every connection of the station
-                for connection in station1.connections:
-                    uid += 1
-                    line = Line(uid)
-                    line.add_connection(connection, self._max_duration,
-                                        station1)
+                # Choose the option with lowest corrected duration
+                best_option = min(self._choices, key=self._choices.get)
 
-                    # Add minimal duration to get to station2
-                    line.update_penalty(self.station_distance(
-                        connection.other(station1), station2) * speed)
+                # If it an empty line add first connection
+                if uid == 0:
+                    starting_station = station = station1
+                    start = True
 
-                    # Add line to choices with sum of duration
-                    # and calculated minimal duration
-                    self._choices[line] = line.duration + line.penalty
+                else:
+                    station = best_option.stations[-1]
+                    starting_station = None
+                    start = False
 
-            # If the last station in the best line is the same as station2
-            elif best_option.stations[-1] == station2:
+                # If the last station in the best line is the same as station2
+                if station == station2:
 
-                # Add best line to results for number_of_results times
-                self._result.append(best_option)
-                c += 1
-                if c == self._number_of_results:
-                    break
+                    if self._number_of_results == 1:
+                        self._result = best_option
+                        break
 
-            # Else choose the last station of the best option
-            else:
-                station = best_option.stations[-1]
+                    else:
+                        # Add best line to results for number_of_results times
+                        self._result.append(best_option)
+                        c += 1
+                        if c == self._number_of_results:
+                            break
 
-                # Create a new line for every connection of the station
-                for connection in station.connections:
-                    uid += 1
-                    line = Line(uid)
+                else:
 
-                    # Add the connections made before to the new line
-                    line.add_connection(best_option.connections[0],
-                                        self._max_duration, station1)
+                    # Create a new line for every connection of the station
+                    for connection in station.connections:
+                        uid += 1
+                        line = Line(uid)
 
-                    for old_connection in best_option.connections[1:]:
-                        line.add_connection(old_connection, self._max_duration)
+                        if not start:
+                            # Add the connections made before to the new line
+                            line.add_connection(best_option.connections[0],
+                                                self._max_duration, station1)
+                            for old_connection in best_option.connections[1:]:
+                                line.add_connection(old_connection,
+                                                    self._max_duration)
 
-                    # Add new connection
-                    line.add_connection(connection, self._max_duration)
+                        line.add_connection(connection, self._max_duration,
+                                            starting_station)
 
-                    # Add minimal duration to get to station2
-                    line.update_penalty(self.station_distance(
-                        connection.other(station), station2) * speed)
-                    self._choices[line] = line.duration + line.penalty
+                        # Add minimal duration to get to station2
+                        line._penalty = (self.station_distance(
+                            connection.other(station), station2) * speed)
 
-            # Delete the line used for calculations from options
-            del self._choices[best_option]
+                        # Add line to choices with sum of duration
+                        # and calculated minimal duration
+                        self._choices[line] = line.duration + line.penalty
+
+                # Delete the line used for calculations from options
+                del self._choices[best_option]
 
         # Return result
         return self._result

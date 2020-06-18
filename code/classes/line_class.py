@@ -15,7 +15,7 @@ class Line():
     the Line class defines a combination of connections
         (and thus also stations)
 
-    paramters:
+    parameters:
         id              - is the lineid;
         connections     - all connections present in this line;
         stations        - the stations of this line in the correct order;
@@ -139,7 +139,7 @@ class Line():
 
         return connections
 
-    def add_connection(self, connection, max_duration, starting=None):
+    def add_connection(self, connection, max_duration, starting_station=None):
         """
         adds a connection to the connections list if the connection is valid
 
@@ -168,12 +168,12 @@ class Line():
             if len(self._stations) == 0:
 
                 # if starting station is defined set starting station
-                if starting is None:
+                if starting_station is None:
                     for station in connection.section:
                         self._stations.append(station)
                 else:
-                    self._stations.append(starting)
-                    self._stations.append(connection.other(starting))
+                    self._stations.append(starting_station)
+                    self._stations.append(connection.other(starting_station))
 
                 self._connections.append(connection)
 
