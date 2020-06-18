@@ -83,6 +83,19 @@ class Connection():
 
         return self._start, self._end
 
+    def other(self, station):
+        """
+        Give the other station in a connection
+        """
+        if station == self._start:
+            other = self._end
+        elif station == self._end:
+            other = self._start
+        else:
+            exit("Not a Station")
+
+        return other
+
     def __repr__(self):
         """
         return the correct representation of the Connection class
