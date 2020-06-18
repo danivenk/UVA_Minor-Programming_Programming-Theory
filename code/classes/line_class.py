@@ -100,6 +100,10 @@ class Line():
 
         self._penalty += value
 
+    @property
+    def begin_end_station_index(self):
+        return (0, 1), (-1, -1)
+
     def get_begin_end_options(self):
 
         if len(self._stations) == 0:

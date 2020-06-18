@@ -12,7 +12,6 @@ import math
 from collections import defaultdict
 
 from code.classes import Line
-from code.function.objective import goal_function
 
 
 class Random_Connections():
@@ -50,6 +49,21 @@ class Random_Connections():
 
         return line
 
+    def goal_function(self, lines, penalty=0):
+
+        used_connections = set()
+        Min = penalty
+
+        for line in lines:
+            Min += line.duration
+            for connection in line.connections:
+                used_connections.add(connection)
+
+        p = len(used_connections)/len(self._connections)
+        T = len(lines)
+
+        return p * 10000 - (T * 100 + Min), p
+
     def run(self, repeat=1):
 
         try:
@@ -65,12 +79,9 @@ class Random_Connections():
                 for line_index in range(n_of_l):
                     lines.append(self.create_line(line_index))
 
-                goal_function_result = goal_function(lines, self._connections,
-                                                     n_of_l)
+                goal_function_result = self.goal_function(lines)
 
-                self._result.append((lines,) +
-                                    goal_function(lines, self._connections,
-                                                  n_of_l))
+                self._result.append((lines,) + goal_function_result)
                 self._scores["run"].append(run)
                 self._scores["score"].append(goal_function_result[0])
 
