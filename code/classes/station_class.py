@@ -29,7 +29,7 @@ class Station():
         """
         initialize a station
 
-        paramters:
+        parameters:
             name    - name of the station;
             lat     - latitude position of the station;
             long    - longitude position of the station;
