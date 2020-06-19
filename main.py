@@ -102,7 +102,7 @@ def print_help(arguments):
     """
 
     # print usage
-    print("usage ./main.py [options]\n")
+    print("usage python3 main.py [options]\n")
 
     print("required options:")
 

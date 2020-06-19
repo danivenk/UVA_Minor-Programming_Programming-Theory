@@ -100,8 +100,8 @@ class Greedy(Random_Connections):
                 goal_function_result = self.goal_function(lines)
 
                 self._result.append((lines,) + goal_function_result)
-                self._scores["run"].append(run)
-                self._scores["score"].append(goal_function_result[0])
+                self._scores[n_of_l]["runs"].append(run)
+                self._scores[n_of_l]["scores"].append(goal_function_result[0])
 
             self._result = sorted(self._result, key=lambda x: x[1],
                                   reverse=True)[:5]
