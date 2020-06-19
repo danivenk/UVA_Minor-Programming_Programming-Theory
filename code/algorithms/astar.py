@@ -1,8 +1,8 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
-astar.py gives the fastest line(s) between two stations
+astar.py uses A* algorithm to give back fastest line between stations
 Michael Faber, 6087582
 """
 
@@ -13,12 +13,37 @@ from code.classes import Line
 
 
 class A_Star():
+    """
+    the A_Star class is a collection of parameters, properties and methods
+        to find the fastest line between two stations using an A* algorithm.
 
-    def __init__(self, connections, stations,
-                 max_duration, number_of_results=1):
+    parameters:
+        connections         - all connections that can be used in a line;
+        max_duration        - maximal duration of the line in minutes;
+        result              - result or list of results of the algorithm;
+        choices             - dictionary containing all starting points;
+        number_of_results   - number of results that will be returned;
+
+    property:
+        result              - returns result or list of results;
+
+    methods:
+        time_per_km         - returns lowest duration divided by distance;
+        station_distance    - returns distance between two stations in km;
+        create_line          - returns shortest line(s) between two stations;
+    """
+
+    def __init__(self, connections, max_duration, number_of_results=1):
+        """
+        initialize A_Star
+
+        parameters:
+            connections         - all connections that can be used in a line;
+            max_duration        - maximal duration of the line in minutes;
+            number_of_results   - number of results that will be returned;
+        """
 
         self._connections = connections
-        self._stations = stations
         self._max_duration = max_duration
         self._result = []
         self._choices = defaultdict(float)
@@ -34,8 +59,7 @@ class A_Star():
 
     def time_per_km(self):
         """
-        Gives back the fastest time a train
-        in connections does over 1 km.
+        Gives back the fastest time a train in connections does over 1 km.
         """
 
         # Create empty list for time per km for every connection
@@ -61,6 +85,10 @@ class A_Star():
     def station_distance(self, station1, station2):
         """
         Calculate distance between two stations using geopy
+
+        parameters:
+            station1    - station of Station class;
+            station2    - station of Station class;
         """
 
         return distance.distance(station1.position, station2.position).km
@@ -68,6 +96,11 @@ class A_Star():
     def create_line(self, station1, station2):
         """
         Returns line(s) between two stations with the shortest duration
+            using the A* algorithm
+
+        parameters:
+            station1    - station where pathfinding starts;
+            station2    - station where pathfinding is going to;
         """
 
         # Set counters
@@ -137,9 +170,10 @@ class A_Star():
                         line.penalty = (self.station_distance(
                             connection.other(station), station2) * speed)
 
-                        # Add line to choices with sum of duration
-                        # and calculated minimal duration
-                        self._choices[line] = line.duration + line.penalty
+                        # Add line to choices with sum of duration and
+                        # minimal duration if less than max duration
+                        if line.duration + line.penalty <= self._max_duration:
+                            self._choices[line] = line.duration + line.penalty
 
                 # Delete the line used for calculations from options
                 del self._choices[best_option]
