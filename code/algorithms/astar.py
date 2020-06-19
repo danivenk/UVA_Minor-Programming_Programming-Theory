@@ -14,7 +14,7 @@ from code.classes import Line
 
 class A_Star():
     """
-        the A_Star class is a collection of parameters, properties and methods
+    the A_Star class is a collection of parameters, properties and methods
         to find the fastest line between two stations using an A* algorithm.
 
     parameters:
@@ -59,8 +59,7 @@ class A_Star():
 
     def time_per_km(self):
         """
-        Gives back the fastest time a train
-        in connections does over 1 km.
+        Gives back the fastest time a train in connections does over 1 km.
         """
 
         # Create empty list for time per km for every connection
@@ -86,6 +85,10 @@ class A_Star():
     def station_distance(self, station1, station2):
         """
         Calculate distance between two stations using geopy
+
+        parameters:
+            station1    - station of Station class;
+            station2    - station of Station class;
         """
 
         return distance.distance(station1.position, station2.position).km
@@ -93,6 +96,11 @@ class A_Star():
     def create_line(self, station1, station2):
         """
         Returns line(s) between two stations with the shortest duration
+            using the A* algorithm
+
+        parameters:
+            station1    - station where pathfinding starts;
+            station2    - station where pathfinding is going to;
         """
 
         # Set counters
