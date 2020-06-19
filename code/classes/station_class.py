@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
@@ -16,13 +16,15 @@ class Station():
 
     parameters:
         name    - name of the station;
-        x       - longitude position of the station;
-        y       - latitiude position of the station;
+        lat     - longitude position of the station;
+        long    - latitiude position of the station;
 
     properties:
         position        - returns the longitude and latitude of the station;
         connections     - returns all all connections of this station;
-            setter: connection is of type Conenction
+
+    method:
+        add_connection - add connection to this stop;
     """
 
     def __init__(self, name, lat, long):
@@ -35,7 +37,7 @@ class Station():
             long    - longitude position of the station;
         """
 
-        # make sure x/y are floats and name is a string
+        # make sure lat/long are floats and name is a string
         try:
             assert type(name) is str
             lat = float(lat)
@@ -64,13 +66,8 @@ class Station():
         return the connections of this station
         """
 
-        # for connection, stationto in self._connections.items():
-        #     if self == stationto:
-        #         print("from: ", self, "to: ", stationto)
-
         return self._connections
 
-    @connections.setter
     def add_connection(self, connection):
         """
         adds a connection to this stop
@@ -112,6 +109,3 @@ class Station():
         """
 
         return self._name
-
-    # def __eq__(self, other):
-    #     return self._name == other

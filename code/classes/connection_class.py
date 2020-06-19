@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
@@ -23,6 +23,9 @@ class Connection():
         duration    - returns the duration between stations;
             setter condition: duration of more than 0
         section     - returns the start and end stations;
+
+    method:
+        other - get other station in connection;
     """
 
     def __init__(self, start, end, duration):
@@ -49,8 +52,8 @@ class Connection():
         self._duration = duration
 
         # add connection to start and end stations
-        start.add_connection = self
-        end.add_connection = self
+        start.add_connection(self)
+        end.add_connection(self)
 
     @property
     def duration(self):
@@ -86,15 +89,18 @@ class Connection():
     def other(self, station):
         """
         Give the other station in a connection
+
+        parameter:
+            station - return different station than this one;
         """
+        
+        # give other station of this connection
         if station == self._start:
-            other = self._end
+            return self._end
         elif station == self._end:
-            other = self._start
+            return self._start
         else:
             exit("Not a Station")
-
-        return other
 
     def __repr__(self):
         """
