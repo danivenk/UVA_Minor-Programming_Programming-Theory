@@ -29,7 +29,7 @@ class A_Star():
         return self._result
 
     @result.setter
-    def set_result(self, value):
+    def result(self, value):
         self._result = value
 
     def time_per_km(self):
@@ -105,7 +105,7 @@ class A_Star():
                 if station == station2:
 
                     if self._number_of_results == 1:
-                        self._result = best_option
+                        self.result = best_option
                         break
 
                     else:
@@ -134,7 +134,7 @@ class A_Star():
                                             starting_station)
 
                         # Add minimal duration to get to station2
-                        line._penalty = (self.station_distance(
+                        line.penalty = (self.station_distance(
                             connection.other(station), station2) * speed)
 
                         # Add line to choices with sum of duration
@@ -145,4 +145,4 @@ class A_Star():
                 del self._choices[best_option]
 
         # Return result
-        return self._result
+        return self.result
