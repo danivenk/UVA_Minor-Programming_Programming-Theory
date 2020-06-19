@@ -12,29 +12,127 @@ import csv
 import time
 
 
+class Arg():
+    def __init__(self, aliases, description, optional=False,
+                 argument_type="str"):
+        self._aliases = aliases
+        self._description = description
+        self._argument_type = argument_type
+        self._value = None
+        self._optional = optional
+
+    @property
+    def aliases(self):
+        return self._aliases
+
+    @property
+    def description(self):
+        return self._description
+
+    @property
+    def argument_type(self):
+        return self._argument_type
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
+        if self._argument_type == "int":
+            try:
+                self._value = int(value)
+            except ValueError:
+                exit("value is not a integer")
+        else:
+            self._value = value
+
+    @property
+    def optional(self):
+        return self._optional
+
+    @property
+    def name(self):
+        for alias in self._aliases:
+            if "--" in alias:
+                return alias.lstrip("--")
+
+        for alias in self._aliases:
+            if "-" in alias:
+                return alias.lstrip("-")
+
+        return alias
+
+    def __str__(self):
+        return f'{", ".join(self._aliases):<20} {self.description}'
+
+
 def main(argv):
 
-    if len(argv) != 3 or "-h" in argv or "--help" in argv:
-        exit("usage ./create_lines.py <area> <duration> <no_of_lines>")
+    arguments = [Arg(("-h", "--help"), "Prints this message", True),
+                 Arg(("-a", "--area"), "Area run the algorithms for"),
+                 Arg(("-d", "--duration"), "Max duration for one line",
+                     argument_type="int"),
+                 Arg(("-L", "--lines"), "Max no. of lines",
+                     argument_type="int"),
+                 Arg(("-r", "--repeat"), "No. of repetitions", True, "int"),
+                 Arg(("-i", "--iterations"), "No. of iterations per run", True,
+                     "int"),
+                 Arg(("-A", "--algorithm"), "Algorithm to run")]
 
-    area = argv[0]
+    if len(argv) == 0 or "-h" in argv or "--help" in argv:
+        print_help(arguments)
 
-    try:
-        duration = int(argv[1])
-        n_of_l = int(argv[2])
-    except ValueError:
-        exit("make sure duration and no_of_lines are integers")
+    argument_options = ()
 
-    stations_file = f"data/Stations{area}.csv"
-    connections_file = f"data/Connecties{area}.csv"
+    for argument in arguments:
+        argument_options += argument.aliases
+
+    user_input = dict()
+
+    for arg in arguments:
+        for index in range(0, len(argv) - 1, 2):
+            if argv[index] in arg.aliases and \
+                    argv[index + 1] not in argument_options:
+                try:
+                    arg.value = argv[index + 1]
+                    user_input[arg.name] = arg.value
+                except IndexError:
+                    pass
+            elif argv[index + 1] in argument_options:
+                print_help(arguments)
+
+    stations_file = f"data/Stations{user_input['area']}.csv"
+    connections_file = f"data/Connecties{user_input['area']}.csv"
 
     stations, connections = load(stations_file, connections_file)
 
-    lines, score = create_lines(stations, connections, duration, n_of_l)
+    lines, score = create_lines(stations, connections, **user_input)
 
-    plot_map(stations, connections, lines, area)
+    plot_map(stations, connections, lines, user_input['area'])
 
     output(lines, score)
+
+
+def print_help(arguments):
+    print("usage ./main.py [options]\n")
+
+    print("required options:")
+
+    for argument in arguments:
+        if not argument.optional:
+            print(argument)
+
+    print()
+    print("optional options:")
+
+    for argument in arguments:
+        if argument.optional:
+            print(argument)
+
+    print()
+
+    exit()
 
 
 def load_data(stations_file, connections_file):
@@ -52,20 +150,29 @@ def output(lines, score):
     output_writer.writerow(["train", "stations"])
 
     for index, line in enumerate(lines):
-        output_writer.writerow([f"train_{index + 1}", line.stations])
+        output_writer.writerow([f"train_{index + 1}",
+                                f"[{station for station in line.stations}]"])
 
     output_writer.writerow(["score", score])
 
 
-def create_lines(stations, connections, duration, n_of_l, algorithm="greedy"):
+def create_lines(stations, connections, **kwargs):
 
-    random = Random_Connections(connections, duration, n_of_l)
-    greedy = Greedy(connections, duration, n_of_l)
+    required = ["algorithm", "duration", "lines"]
 
-    if algorithm == "random":
-        lines, K, p = random.run(10000)[0]
-    elif algorithm == "greedy":
-        lines, K, p = greedy.run(10000)[0]
+    for item in required:
+        if item not in kwargs.keys():
+            exit("make sure algorithm, duration and lines")
+
+    algorithms = {"random": Random_Connections, "greedy": Greedy}
+
+    algorithm = algorithms[kwargs["algorithm"].lower()](
+        connections, kwargs["duration"], kwargs["lines"])
+
+    try:
+        lines, K, p = algorithm.run(kwargs["repeat"])[0]
+    except KeyError:
+        lines, K, p = algorithm.run()[0]
 
     for line in lines:
         print(", ".join(str(station) for station in line.stations))
