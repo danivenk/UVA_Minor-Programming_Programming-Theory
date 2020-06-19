@@ -1,8 +1,8 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
-greedy.py creates lines according to the given constraints
+greedy.py creates lines according to greedy constraints
 Michael Faber, 6087582
 """
 
@@ -14,15 +14,34 @@ from code.algorithms.random import Random_Connections
 
 
 class Greedy(Random_Connections):
+    """
+    Defines the Greedy algorithm
+        has inheritance from Random_Connections
+
+    parameters:
+        connections     - connections in database;
+        max_duration    - maximal duration for a line
+        max_n_of_l      - maximal number of lines;
+
+    methods:
+       create_line      - creates a single line using greedy algorithm;
+       run              - runs the algorithm a number of times
+    """
 
     def create_line(self, uid, connection_list):
         '''
         Creates a single line using greedy algorithm
+
+        parameters:
+            uid             - unique id given to Line class;
+            connection_list - list of all connections that can be used;
         '''
 
+        # Set variables
         state = 0
         line = Line(uid)
 
+        # Loop till broken
         while True:
 
             # Choose random starting point
@@ -76,33 +95,54 @@ class Greedy(Random_Connections):
         return line, connection_list
 
     def run(self, repeat=1):
+        """
+        run this algorithm
 
+        parameter:
+            repeat - number of repeats to do for this algorithm;
+
+        returns the result
+        """
+
+        # make sure repeat is an integer
         try:
             float(repeat)
         except ValueError:
             exit("RunError: please make sure you've entered a number for "
                  "the number of repeats")
 
+        # loop for each repeat
         for run in range(repeat):
+            # loop between max and min number of lines
             for n_of_l in range(self._max_n_of_l, self._min_n_of_l - 1, -1):
+
+                # predefine lines list
                 lines = []
 
+                # create list of all connections
                 connection_list = [str(connection) for connection
                                    in copy.deepcopy(self._connections)]
+
+                # create current number of lines
                 for line_index in range(n_of_l):
                     line, connection_list = \
                         self.create_line(line_index, connection_list)
+
+                    # check for empty values
                     if not line:
                         pass
                     else:
                         lines.append(line)
 
+                # get score
                 goal_function_result = self.goal_function(lines)
 
+                # add result to results attribute and save score
                 self._result.append((lines,) + goal_function_result)
                 self._scores["run"].append(run)
                 self._scores["score"].append(goal_function_result[0])
 
+            # save the 5 best results
             self._result = sorted(self._result, key=lambda x: x[1],
                                   reverse=True)[:5]
 
