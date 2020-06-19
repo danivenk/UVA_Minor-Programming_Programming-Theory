@@ -1,12 +1,24 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
-plot_lines.py creates plots for input lines
-Michael Faber, 6087582
-Dani van Enk, 11823526
+plot_lines.py contains methods that can be used 
+    to plot multiple lines on a map
+
+methods:
+    plot_map        - plot all the lines on a map and save as png-file;
+    gpd_map         - returns Geopandas DataFrame of given area;
+    line_coords     - returns start and end values of connection;
+    ofset_dict      - returns dictionairy with connections and their ofsets;
+    aspect_ratio    - returns ratio of latitude and longitude for use in map;
+    random_color    - returns random RGB-values to make color.
+
+authors:
+    Michael Faber, 6087582
+    Dani van Enk, 11823526
 """
 
+# imports
 import math
 import random
 
@@ -21,6 +33,13 @@ from collections import defaultdict
 def plot_map(stations, connections, lines, area, output_path="./output/"):
     """
     Plot all the lines on a Map and save as png-file
+
+    parameters:
+        stations        - all stations in database;
+        connections     - all connections in database;
+        lines           - the lines that are plotted;
+        area            - geographical area of lines;
+        output_path     - folder where plot is saved;
     """
 
     # Create Figure and Axe
@@ -106,6 +125,10 @@ def plot_map(stations, connections, lines, area, output_path="./output/"):
 def gpd_map(area, path="./data/shapefile/NLD_adm1.dbf"):
     """
     Return Geopandas DataFrame of area
+
+    parameters:
+        area    - geographical area that needs to be mapped
+        path    - path of shapfiles needed to draw in high quality
     """
 
     # Make sure area is a string
@@ -164,6 +187,14 @@ def line_coords(connection, ofset_dict, ratio, line_number, line_size=1,
                 line_distance=0.01):
     """
     Give start and end values of connection, with ofset if it is needed.
+    
+    parameters:
+        connection      - single connection between two stations;
+        ofset_dict      - dictionary containing all ofset information;
+        ratio           - the ratio between longitude and lattitude;
+        line_number     - uid of the line
+        line_size       - width of the line being drawed
+        line_distance   - ofset distance
     """
 
     # Create lists with longitude/latitude values of end points of connection
@@ -186,9 +217,6 @@ def line_coords(connection, ofset_dict, ratio, line_number, line_size=1,
         # Set new location where connection will come
         ofset_state = round((1-(2.0001*(other_lines % 2)))*other_lines/2)
 
-        # # Use ratio to calculate line distance for longitude
-        # longitude_distance = line_distance * ratio
-
         # calculate angle between the x-axis and the linesection
         angle = math.atan((latitude[1] - latitude[0]) /
                           (longitude[1] - longitude[0]))
@@ -209,6 +237,9 @@ def ofset_dict(lines):
     """
     Creates a nested dictionary where for every line the connections
     are showed that have been in a line before and how many times.
+
+    parameter:
+        lines   - all lines that are plotted
     """
 
     # Create empty dictionary
@@ -240,7 +271,10 @@ def ofset_dict(lines):
 
 def aspect_ratio(latitude_list):
     """
-    Return the correct ratio of latitude and longitude for use in map
+    Returns ratio of latitude and longitude for use in map
+
+    parameter:
+        latitude_list  - list of all latitudes used in the plot
     """
 
     # Find middle of map by dividing sum of lowest and highest latitude by 2
