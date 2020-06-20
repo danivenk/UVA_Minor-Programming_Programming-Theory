@@ -7,7 +7,7 @@ Dani van Enk, 11823526
 """
 
 # import used classes
-import code.classes as cls
+import code.classes as clss
 
 
 class Line():
@@ -36,18 +36,30 @@ class Line():
         add_to_penalty          - add value to penalty;
     """
 
-    def __init__(self, _id):
+    def __init__(self, _id, init_station=None):
         """
         initialize the Line class
 
         parameter:
-            id - Line-ID;
+            id              - Line-ID;
+            init_station    - specific starting station;
         """
+
+        try:
+            int(_id)
+            assert type(init_station) is clss.Station or not init_station
+        except (ValueError, AssertionError):
+            exit("make sure line id is an integer and "
+                 "init_station is of type Station")
 
         self._id = _id
         self._connections = []
-        self._stations = []
         self._penalty = 0
+
+        if init_station:
+            self._stations = [init_station]
+        else:
+            self._stations = []
 
     @property
     def duration(self):
@@ -173,7 +185,7 @@ class Line():
 
         return connections
 
-    def add_connection(self, connection, max_duration, starting_station=None):
+    def add_connection(self, connection, max_duration):
         """
         adds a connection to the connections list if the connection is valid
 
@@ -187,7 +199,7 @@ class Line():
 
         # check if connection is type Conenction and max_duration is a number
         try:
-            assert type(connection) is cls.Connection
+            assert type(connection) is clss.Connection
             max_duration = float(max_duration)
         except (AssertionError, ValueError):
             exit("LineAddConnectionError: please make sure the connection "
@@ -202,13 +214,8 @@ class Line():
             # if line is empty add whole connection
             if len(self._stations) == 0:
 
-                # if starting station is defined set starting station
-                if starting_station is None:
-                    for station in connection.section:
-                        self._stations.append(station)
-                else:
-                    self._stations.append(starting_station)
-                    self._stations.append(connection.other(starting_station))
+                for station in connection.section:
+                    self._stations.append(station)
 
                 self._connections.append(connection)
 

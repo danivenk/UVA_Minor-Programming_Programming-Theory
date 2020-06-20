@@ -93,14 +93,14 @@ class Connection():
         parameter:
             station - return different station than this one;
         """
-        
+
         # give other station of this connection
         if station == self._start:
             return self._end
         elif station == self._end:
             return self._start
         else:
-            exit("Not a Station")
+            exit("Not a Station in this Connection")
 
     def __repr__(self):
         """
