@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
-plot_lines.py contains methods that can be used 
+plot_lines.py contains methods that can be used
     to plot multiple lines on a map
 
 methods:
@@ -187,7 +187,7 @@ def line_coords(connection, ofset_dict, ratio, line_number, line_size=1,
                 line_distance=0.01):
     """
     Give start and end values of connection, with ofset if it is needed.
-    
+
     parameters:
         connection      - single connection between two stations;
         ofset_dict      - dictionary containing all ofset information;
