@@ -115,7 +115,7 @@ class A_Star():
         if total_duration <= self._max_duration:
 
             # Create empty line with minimal duration
-            line = Line(uid)
+            line = Line(uid, station1)
             self._choices[line] = total_duration
 
             # While there are still choices
@@ -126,12 +126,11 @@ class A_Star():
 
                 # If it an empty line add first connection
                 if uid == 0:
-                    starting_station = station = station1
+                    station = station1
                     start = True
 
                 else:
                     station = best_option.stations[-1]
-                    starting_station = None
                     start = False
 
                 # If the last station in the best line is the same as station2
@@ -153,18 +152,15 @@ class A_Star():
                     # Create a new line for every connection of the station
                     for connection in station.connections:
                         uid += 1
-                        line = Line(uid)
+                        line = Line(uid, station1)
 
                         if not start:
-                            # Add the connections made before to the new line
-                            line.add_connection(best_option.connections[0],
-                                                self._max_duration, station1)
-                            for old_connection in best_option.connections[1:]:
+
+                            for old_connection in best_option.connections:
                                 line.add_connection(old_connection,
                                                     self._max_duration)
 
-                        line.add_connection(connection, self._max_duration,
-                                            starting_station)
+                        line.add_connection(connection, self._max_duration)
 
                         # Add minimal duration to get to station2
                         line.penalty = (self.station_distance(
