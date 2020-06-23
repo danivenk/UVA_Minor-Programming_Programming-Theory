@@ -28,6 +28,9 @@ class Connection():
         other - get other station in connection;
     """
 
+    # define general unique identifier
+    guid = 0
+
     def __init__(self, start, end, duration):
         """
         initialize a Connection
@@ -36,6 +39,7 @@ class Connection():
             start       - starting station;
             end         - end station;
             duration    - duration between stations;
+            cid         - return the connection id;
         """
 
         # make sure start and end are of Station type and duration is a number
@@ -50,6 +54,10 @@ class Connection():
         self._start = start
         self._end = end
         self._duration = duration
+        self._id = self.guid
+
+        # increase general unique identifier
+        Connection.guid += 1
 
         # add connection to start and end stations
         start.add_connection(self)
@@ -64,7 +72,7 @@ class Connection():
         return self._duration
 
     @duration.setter
-    def set_duration(self, duration):
+    def duration(self, duration):
         """
         sets duration of this connection
 
@@ -86,21 +94,13 @@ class Connection():
 
         return self._start, self._end
 
-    def other(self, station):
+    @property
+    def cid(self):
         """
-        Give the other station in a connection
-
-        parameter:
-            station - return different station than this one;
+        return the connection id
         """
 
-        # give other station of this connection
-        if station == self._start:
-            return self._end
-        elif station == self._end:
-            return self._start
-        else:
-            exit("Not a Station in this Connection")
+        return self._id
 
     def __repr__(self):
         """

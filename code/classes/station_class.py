@@ -93,7 +93,7 @@ class Station():
         # add the station of this connection which is not this station
         for station in section:
             if station is not self:
-                self._connections[connection] = station
+                self._connections[connection.cid] = [connection, station]
 
     def __repr__(self):
         """
@@ -109,3 +109,6 @@ class Station():
         """
 
         return self._name
+
+    def __eq__(self, other):
+        return self._name == other._name

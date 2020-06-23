@@ -7,7 +7,6 @@ Michael Faber, 6087582
 """
 
 from geopy import distance
-from collections import defaultdict
 
 from code.classes import Line
 
@@ -52,7 +51,7 @@ class A_Star():
         self._connections = connections
         self._max_duration = max_duration
         self._result = []
-        self._choices = defaultdict(float)
+        self._choices = dict()
         self._number_of_results = number_of_results
         self._speed = self.time_per_km()
 
@@ -71,6 +70,7 @@ class A_Star():
         parameters:
             best_option    - line that is best option from A to B;
         """
+
         if self._number_of_results == 1:
             self.result = best_option
 
@@ -169,7 +169,8 @@ class A_Star():
                 self.copy_connections(line, best_option)
 
                 # Add new connection
-                line.add_connection(connection, self._max_duration)
+                if not line.add_connection(connection, self._max_duration):
+                    return
 
                 # Add line to choices
                 self.add_choice(line, station2)
@@ -177,7 +178,8 @@ class A_Star():
         else:
 
             # Add new connection
-            line.add_connection(connection, self._max_duration)
+            if not line.add_connection(connection, self._max_duration):
+                return
 
             # Add line to choices
             self.add_choice(line, station2)
@@ -192,19 +194,23 @@ class A_Star():
             station2    - station where pathfinding is going to;
         """
 
+        # return line with station1 if both stations are equal
+        if station1 == station2:
+            return Line(station1)
+
         # Set counters
         c = 0
-        uid = 0
 
         # Set variables
         speed = self._speed
         total_duration = self.station_distance(station1, station2) * speed
+        self._choices = dict()
 
         # If total_duration is shorter or equal to max_duration, run function
         if total_duration <= self._max_duration:
 
             # Create empty line with minimal duration
-            line = Line(uid, station1)
+            line = Line(station1)
             self._choices[line] = total_duration
 
             # While there are still choices
@@ -213,12 +219,8 @@ class A_Star():
                 # Choose the option with lowest corrected duration
                 best_option = min(self._choices, key=self._choices.get)
 
-                # If it an empty line add first connection
-                if uid == 0:
-                    station = station1
-
-                else:
-                    station = best_option.stations[-1]
+                # choose the last station from best_option
+                station = best_option.stations[-1]
 
                 # If the last station in the best line is the same as station2
                 if station == station2:
@@ -232,14 +234,20 @@ class A_Star():
                 else:
 
                     # Create a new line for every connection of the station
-                    for connection in station.connections:
-                        uid += 1
-                        line = Line(uid, station1)
+                    for connection in station.connections.values():
+                        line = Line(station1)
 
-                        self.new_line(connection, line, best_option, station2)
+                        self.new_line(connection[0], line, best_option,
+                                      station2)
 
                 # Delete the line used for calculations from options
                 del self._choices[best_option]
 
         # Return result
+        try:
+            type(self.result) is Line
+        except TypeError:
+            if len(self.result) == 0:
+                return None
+
         return self.result

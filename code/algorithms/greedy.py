@@ -8,9 +8,10 @@ Michael Faber, 6087582
 
 import random as rd
 import copy
+import progressbar as pbar
 
 from code.classes import Line
-from code.algorithms.random import Random_Connections
+from code.algorithms import Random_Connections
 
 
 class Greedy(Random_Connections):
@@ -62,12 +63,11 @@ class Greedy(Random_Connections):
         """
 
         # While current + shortest duration is shorter than max duration
-        while (line.duration + min(line.get_all_options().keys(),
-               key=lambda x: x.duration).duration <= self._max_duration):
+        while (line.duration + min(line.get_all_options().values(),
+               key=lambda x: x[0].duration)[0].duration <= self._max_duration):
 
             # Get all options
-            options = [option for sublist in line.get_begin_end_options()
-                       for option in sublist]
+            options = [option[0] for option in line.get_all_options().values()]
 
             # Get all options that have not been ridden
             updated_options = [option for option in options if str(option)
@@ -88,17 +88,16 @@ class Greedy(Random_Connections):
 
         return line, connection_list
 
-    def create_line(self, uid, connection_list):
+    def create_line(self, connection_list):
         '''
         Creates a single line using greedy algorithm
 
         parameters:
-            uid             - unique id given to Line class;
             connection_list - list of all connections that can be used;
         '''
 
         # Set variables
-        line = Line(uid)
+        line = Line()
 
         # If there is a startpoint
         if connection_list:
@@ -136,6 +135,21 @@ class Greedy(Random_Connections):
             exit("RunError: please make sure you've entered a number for "
                  "the number of repeats")
 
+        # print running parameters
+        print(f"Runing, Greedy {repeat} times")
+
+        # define the progress bar widgets
+        bar_widgets = [pbar.Bar("#", "[", "]"), " ", pbar.ETA()]
+
+        # define the max value
+        maxval = repeat * (self._max_n_of_l - self._min_n_of_l + 1)
+
+        # create the progress bar and start
+        bar = pbar.ProgressBar(maxval=maxval, widgets=bar_widgets).start()
+
+        # initiate step to 0
+        step = 0
+
         # loop for each repeat
         for run in range(repeat):
             # loop between max and min number of lines
@@ -149,9 +163,9 @@ class Greedy(Random_Connections):
                                    in copy.deepcopy(self._connections)]
 
                 # create current number of lines
-                for line_index in range(n_of_l):
+                for _ in range(n_of_l):
                     line, connection_list = \
-                        self.create_line(line_index, connection_list)
+                        self.create_line(connection_list)
 
                     # check for empty values
                     if not line:
@@ -167,8 +181,15 @@ class Greedy(Random_Connections):
                 self._scores[n_of_l]["runs"].append(run)
                 self._scores[n_of_l]["scores"].append(goal_function_result[0])
 
+                # update progress bar
+                step += 1
+                bar.update(step)
+
             # save the 5 best results
             self._result = sorted(self._result, key=lambda x: x[1],
                                   reverse=True)[:5]
+
+        # finish the progress bar
+        bar.finish()
 
         return self._result

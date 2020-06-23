@@ -26,17 +26,22 @@ class Line():
         stations                    - returns stations list of this line;
         connections                 - returns connections list of this line;
         penalty                     - returns the penalty value of this line;
+        begin_end_station           - returns the begin and end stations;
         begin_end_station_index     - returns the begin end indices;
 
     method:
+        add_to_penalty          - add value to penalty;
         get_begin_end_options   - get begin and end options for this line;
         get_all_options         - get all options for this line;
         add_connection          - adds connection to line if valid;
             true if added correctly false if not;
-        add_to_penalty          - add value to penalty;
+        split_line              - splits the line into 2 lines at given index;
     """
 
-    def __init__(self, _id, init_station=None):
+    # define general unique identifier
+    guid = 0
+
+    def __init__(self, init_station=None):
         """
         initialize the Line class
 
@@ -46,16 +51,18 @@ class Line():
         """
 
         try:
-            int(_id)
             assert type(init_station) is clss.Station or not init_station
         except (ValueError, AssertionError):
-            exit("make sure line id is an integer and "
-                 "init_station is of type Station")
+            exit("make sure init_station is of type Station")
 
-        self._id = _id
+        self._id = self.guid
         self._connections = []
         self._penalty = 0
 
+        # increase general unique identifier
+        Line.guid += 1
+
+        # if initial station defined start stations list with that station
         if init_station:
             self._stations = [init_station]
         else:
@@ -140,6 +147,14 @@ class Line():
         self._penalty += value
 
     @property
+    def begin_end_station(self):
+        """
+        return the begin and end stations
+        """
+
+        return [self._stations[0], self._stations[-1]]
+
+    @property
     def begin_end_station_index(self):
         """
         returns the begin end indices and direction to go to
@@ -192,7 +207,6 @@ class Line():
         parameters:
             connection          - connection to be added;
             max_duration        - max duration of this line;
-            starting_station    - define a starting station (default None);
 
         returns True if the connection was successfully added and false if not
         """
@@ -203,7 +217,7 @@ class Line():
             max_duration = float(max_duration)
         except (AssertionError, ValueError):
             exit("LineAddConnectionError: please make sure the connection "
-                 "you're adding is a connction object\n "
+                 "you're adding is a connection object\n "
                  "and max_duration is a number")
 
         # check if the connection to be added makes the duration more than max
@@ -226,20 +240,43 @@ class Line():
                     self.get_begin_end_options()
 
                 # if connection fits at the end add to the end
-                if connection in current_end_options:
-                    next_station = current_end_options[connection]
+                if connection.cid in current_end_options:
+                    next_station = current_end_options[connection.cid][1]
                     self._stations.append(next_station)
                     self._connections.append(connection)
 
                 # if connection fits at the begin add to the begin
-                elif connection in current_start_options:
-                    previous_station = current_start_options[connection]
+                elif connection.cid in current_start_options:
+                    previous_station = current_start_options[connection.cid][1]
                     self._stations.insert(0, previous_station)
                     self._connections.insert(0, connection)
                 else:
                     return False
 
         return True
+
+    def split_line(self, index, max_duration):
+        """
+        splits line into 2 at given index
+
+        parameters:
+            index           - index to split the line at;
+            max_duration    - maximum duration of a line;
+        """
+
+        # create 2 lines one starting at the start of the line
+        line1 = Line(self.begin_end_station[0])
+        line2 = Line()
+
+        # loop over each connection
+        for i, connection in enumerate(self.connections):
+            # split it over the 2 lines
+            if i < index:
+                line1.add_connection(connection, max_duration)
+            elif i >= index:
+                line2.add_connection(connection, max_duration)
+
+        return line1, line2
 
     def __repr__(self):
         """

@@ -9,12 +9,10 @@ Dani van Enk, 11823526
 # used imports
 import sys
 import csv
-import time
 import matplotlib.pyplot as plt
 
 from code.data_loader.load_data import load
-from code.algorithms import Random_Connections
-from code.algorithms.greedy import Greedy
+from code.algorithms import Random_Connections, Greedy, Hill_Climber
 from code.visualization.plot_lines import plot_map
 from code.classes import Arg
 
@@ -31,7 +29,8 @@ def main(argv):
                      argument_type="int"),
                  Arg(("-L", "--lines"), "Max no. of lines",
                      argument_type="int"),
-                 Arg(("-r", "--repeat"), "No. of repetitions", True, "int"),
+                 Arg(("-r", "--repeat"), "No. of repetitions",
+                     argument_type="int"),
                  Arg(("-i", "--iterations"), "No. of iterations per run", True,
                      "int"),
                  Arg(("-A", "--algorithm"), "Algorithm to run")]
@@ -75,16 +74,8 @@ def main(argv):
     # load stations and connections
     stations, connections = load(stations_file, connections_file)
 
-    # start algorithm timer
-    start = time.time_ns()
-
     # create lines according to user parameters
     lines, score, scores = create_lines(connections, **user_input)
-
-    # print time for algorithm
-    end = time.time_ns()
-
-    print(f"{(end-start) / 1e9} s")
 
     # plot the resulting line map
     plot_map(stations, connections, lines, user_input['area'])
@@ -144,8 +135,9 @@ def output(lines, score, scores, algorithm):
 
     # add solution
     for index, line in enumerate(lines):
+        stations_string = ', '.join(str(station) for station in line.stations)
         output_writer.writerow([f"train_{index + 1}",
-                                f"[{station for station in line.stations}]"])
+                                f"[{stations_string}]"])
 
     # add score
     output_writer.writerow(["score", score])
@@ -171,7 +163,7 @@ def create_lines(connections, **kwargs):
     """
 
     # define required kwargs
-    required = ["algorithm", "duration", "lines"]
+    required = ["algorithm", "duration", "lines", "repeat"]
 
     # check if all required are present in kwargs
     for item in required:
@@ -179,17 +171,18 @@ def create_lines(connections, **kwargs):
             exit("make sure algorithm, duration and lines")
 
     # define all algorithm options
-    algorithms = {"random": Random_Connections, "greedy": Greedy}
+    algorithms = {"random": Random_Connections, "greedy": Greedy,
+                  "hill_climber": Hill_Climber}
 
     # run the specified algorithm
     algorithm = algorithms[kwargs["algorithm"].lower()](
         connections, kwargs["duration"], kwargs["lines"])
 
-    # if repeat is specified run multiple
+    # if iteration is specified run multiple
     try:
-        lines, K, p = algorithm.run(kwargs["repeat"])[0]
+        lines, K, p = algorithm.run(kwargs["repeat"], kwargs["iterations"])[0]
     except KeyError:
-        lines, K, p = algorithm.run()[0]
+        lines, K, p = algorithm.run(kwargs["repeat"])[0]
 
     # get score
     scores = algorithm.scores
