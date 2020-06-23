@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 plot_lines.py contains methods that can be used
@@ -14,8 +12,8 @@ methods:
     random_color    - returns random RGB-values to make color.
 
 authors:
-    Michael Faber, 6087582
     Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # imports
@@ -240,6 +238,8 @@ def ofset_dict(lines):
 
     parameter:
         lines   - all lines that are plotted
+
+    returns dictionary with ofset for every connection in every line
     """
 
     # Create empty dictionary
@@ -289,4 +289,5 @@ def random_color():
     """
     Return random RGB-values to make color.
     """
+
     return (random.random(), random.random(), random.random())

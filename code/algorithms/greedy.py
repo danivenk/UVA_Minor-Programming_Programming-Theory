@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 greedy.py creates lines according to greedy constraints
-Michael Faber, 6087582
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 import random as rd
@@ -61,8 +62,10 @@ class Greedy(Random_Connections):
         parameters:
             line                - line where best option must be chosen for;
             connection_list     - list with all possible connections;
-            method              - method used to choos best option;
+            method              - method used to choose best option;
             one_time            - if a connection can be used one time;
+
+        returns a single connection that can be added to line
         """
 
         # Get all options
@@ -105,6 +108,8 @@ class Greedy(Random_Connections):
         parameters:
             line            - line with only start connection added;
             connection_list - list with all possible connections;
+
+        returns line with new options and updated connection_list
         """
 
         # While current + shortest duration is shorter than max duration
@@ -134,6 +139,8 @@ class Greedy(Random_Connections):
         parameters:
             uid             - unique id given to Line class;
             connection_list - list of all connections that can be used;
+
+        returns completed line and connection_list for extra runs
         '''
 
         # Set variables

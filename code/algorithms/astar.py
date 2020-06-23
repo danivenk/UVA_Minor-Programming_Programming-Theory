@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 astar.py uses A* algorithm to give back fastest line between stations
-Michael Faber, 6087582
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 from geopy import distance
@@ -58,10 +59,18 @@ class A_Star():
 
     @property
     def result(self):
+        """
+        returns result or list of results
+        """
+
         return self._result
 
     @result.setter
     def result(self, value):
+        """
+        set result
+        """
+
         self._result = value
 
     def update_result(self, best_option):
@@ -71,20 +80,26 @@ class A_Star():
         parameters:
             best_option    - line that is best option from A to B;
         """
+
         if self._number_of_results == 1:
             self.result = best_option
 
         else:
+
             # Add best line to results for number_of_results times
             self._result.append(best_option)
 
     @property
     def speed(self):
+        """
+        returns speed
+        """
+
         return self._speed
 
     def time_per_km(self):
         """
-        Gives back the fastest time a train in connections does over 1 km.
+        Returns the fastest time a train in connections does over 1 km.
         """
 
         # Create empty list for time per km for every connection
@@ -114,6 +129,8 @@ class A_Star():
         parameters:
             station1    - station of Station class;
             station2    - station of Station class;
+
+        returns distance in kilometer
         """
 
         return distance.distance(station1.position, station2.position).km
@@ -126,6 +143,7 @@ class A_Star():
             new_line    - line where the connections will be added to;
             old_line    - line where the connections will be copied from;
         """
+
         for old_connection in old_line.connections:
             new_line.add_connection(old_connection,
                                     self._max_duration)
@@ -136,6 +154,8 @@ class A_Star():
 
         parameter:
             method  - method used (min, max, minconnections, maxconnections);
+
+        returns chosen line
         """
 
         # If method is min, return min
@@ -219,6 +239,8 @@ class A_Star():
         parameters:
             station1    - station where pathfinding starts;
             station2    - station where pathfinding is going to;
+
+        returns a single or list of lines between two stations
         """
 
         # Set counters
