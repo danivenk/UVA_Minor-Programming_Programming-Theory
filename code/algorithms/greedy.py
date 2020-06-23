@@ -24,10 +24,11 @@ class Greedy(Random_Connections):
         max_n_of_l      - maximal number of lines;
 
     methods:
-       choose_start     - returns starting connection that has not been used;
-       add_options      - add as much greedy options as possible to line;
-       create_line      - creates a single line using greedy algorithm;
-       run              - runs the algorithm a number of times
+       choose_start         - returns start connection that has not been used;
+       choose_best_option   - returns best option according to method;
+       add_options          - add as much greedy options as possible to line;
+       create_line          - creates a single line using greedy algorithm;
+       run                  - runs the algorithm a number of times
     """
 
     def choose_start(self, connection_list):
@@ -52,6 +53,51 @@ class Greedy(Random_Connections):
 
         return start_connection, connection_list
 
+    def choose_best_option(self, line, connection_list,
+                           method="min", one_time=True):
+        """
+        chooses best option according to different methods
+
+        parameters:
+            line                - line where best option must be chosen for;
+            connection_list     - list with all possible connections;
+            method              - method used to choos best option;
+            one_time            - if a connection can be used one time;
+        """
+
+        # Get all options
+        options = [option for sublist in line.get_begin_end_options()
+                   for option in sublist]
+
+        if one_time:
+            # Get all options that have not been ridden
+            options = [option for option in options if str(option)
+                       in connection_list]
+
+        if options:
+
+            # If method is min, return min
+            if method == "min":
+                return min(options, key=lambda x: x.duration)
+
+            # If method is max, return max
+            elif method == "max":
+                return min(options, key=lambda x: x.duration)
+
+            # If method is minconnections, return min connections
+            elif method == "minconnections":
+                return min(options, key=lambda x: len(x.connections))
+
+            # If method is maxconnections, return max connections
+            elif method == "maxconnections":
+                return max(options, key=lambda x: len(x.connections))
+
+            # If other method is specified, print error
+            else:
+                print("Give a valid method")
+
+        return False
+
     def add_options(self, line, connection_list):
         """
         Add as much greedy options as possible to line
@@ -65,21 +111,14 @@ class Greedy(Random_Connections):
         while (line.duration + min(line.get_all_options().keys(),
                key=lambda x: x.duration).duration <= self._max_duration):
 
-            # Get all options
-            options = [option for sublist in line.get_begin_end_options()
-                       for option in sublist]
+            # Choose the best option
+            best_option = self.choose_best_option(line, connection_list)
 
-            # Get all options that have not been ridden
-            updated_options = [option for option in options if str(option)
-                               in connection_list]
-
-            # Choose the updated option with shortest duration
-            if updated_options:
-                best_option = min(updated_options,
-                                  key=lambda x: x.duration)
+            # If there is a best option delete from connection list
+            if best_option:
                 connection_list.remove(str(best_option))
 
-            # If there are no updated options stop the line
+            # If there are no best option stop the line
             else:
                 break
 

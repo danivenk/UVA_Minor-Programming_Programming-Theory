@@ -7,7 +7,6 @@ Michael Faber, 6087582
 """
 
 from geopy import distance
-from collections import defaultdict
 
 from code.classes import Line
 
@@ -34,6 +33,7 @@ class A_Star():
         time_per_km         - returns lowest duration divided by distance;
         station_distance    - returns distance between two stations in km;
         copy_connections    - copies connections from one line to another;
+        choose_best_option  - returns best option for chosen method;
         add_choice          - adds choice to choices;
         new_line            - creates new line and adds to choices;
         create_line         - returns shortest line(s) between two stations;
@@ -52,7 +52,7 @@ class A_Star():
         self._connections = connections
         self._max_duration = max_duration
         self._result = []
-        self._choices = defaultdict(float)
+        self._choices = dict()
         self._number_of_results = number_of_results
         self._speed = self.time_per_km()
 
@@ -130,6 +130,34 @@ class A_Star():
             new_line.add_connection(old_connection,
                                     self._max_duration)
 
+    def choose_best_option(self, method="min"):
+        """
+        returns best option for chosen method
+
+        parameter:
+            method  - method used (min, max, minconnections, maxconnections);
+        """
+
+        # If method is min, return min
+        if method == "min":
+            return min(self._choices, key=self._choices.get)
+
+        # If method is max, return max
+        elif method == "max":
+            return max(self._choices, key=self._choices.get)
+
+        # If method is minconnections, return min connections
+        elif method == "minconnections":
+            return min(self._choices, key=lambda x: len(x.connections))
+
+        # If method is maxconnections, return max connections
+        elif method == "maxconnections":
+            return max(self._choices, key=lambda x: len(x.connections))
+
+        # If other method is specified, print error
+        else:
+            print("Give a valid method")
+
     def add_choice(self, line, station2):
         """
         Calculates penalty time and adds line to choices
@@ -169,10 +197,11 @@ class A_Star():
                 self.copy_connections(line, best_option)
 
                 # Add new connection
-                line.add_connection(connection, self._max_duration)
+                if line.duration + connection.duration <= self._max_duration:
+                    line.add_connection(connection, self._max_duration)
 
-                # Add line to choices
-                self.add_choice(line, station2)
+                    # Add line to choices
+                    self.add_choice(line, station2)
 
         else:
 
@@ -197,8 +226,9 @@ class A_Star():
         uid = 0
 
         # Set variables
-        speed = self._speed
-        total_duration = self.station_distance(station1, station2) * speed
+        self.result = []
+        self._choices = dict()
+        total_duration = self.station_distance(station1, station2) * self.speed
 
         # If total_duration is shorter or equal to max_duration, run function
         if total_duration <= self._max_duration:
@@ -211,7 +241,7 @@ class A_Star():
             while self._choices:
 
                 # Choose the option with lowest corrected duration
-                best_option = min(self._choices, key=self._choices.get)
+                best_option = self.choose_best_option("max")
 
                 # If it an empty line add first connection
                 if uid == 0:
