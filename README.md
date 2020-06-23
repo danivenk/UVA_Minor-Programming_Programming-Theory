@@ -100,7 +100,7 @@ All the important folders and files are structured below:
 - **/data**: contains csv-files of RailNL case.
     - **/data/shapefile**: contains shapefile to draw (parts of) the Netherlands.
 - **/output**: contains (examples of) output-files.
-    
+    - **/output/plot**: contains output-plots.
 
 ## Authors
 - Dani van Enk

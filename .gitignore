@@ -3,7 +3,7 @@ testing
 .vscode
 test.py
 *.drawio
-output/*
 debug/
+output/*.*
 
 !output/README.md

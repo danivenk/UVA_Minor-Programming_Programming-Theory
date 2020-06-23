@@ -28,7 +28,7 @@ from PIL import ImageColor
 from collections import defaultdict
 
 
-def plot_map(stations, connections, lines, area, output_path="./output/"):
+def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
     """
     Plot all the lines on a Map and save as png-file
 
