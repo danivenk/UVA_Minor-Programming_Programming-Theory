@@ -87,7 +87,7 @@ An example of terminal output of the above function is:
 
 And an example of the output map will look like:
 
-<img src="doc/img/Example.png" alt="Output Map Example" />
+![Output Map Example](doc/img/Example.png)
 
 ### Structure
 All the important folders and files are structured below:
