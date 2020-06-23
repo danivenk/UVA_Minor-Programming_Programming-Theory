@@ -1,4 +1,4 @@
-# RailNL - Shibayama (芝山)
+# RailNL - ![Logo](doc/img/logo_without_name.svg) Shibayama (芝山)
 -------------------------------------------
 In the [RailNL](https://theorie.mprog.nl/cases/railnl) case, we're trying to optimize the line planning of trains. The case contains two sets of CSV-files, one for the stations and connections in Noord- and Zuid-Holland, and one for the stations and connections of the Netherlands. The goal is to get for both areas a covering network with a maximum of maxLines and where the duration of every line is not longer than maxTime.
 
@@ -103,5 +103,5 @@ All the important folders and files are structured below:
     - **/output/plot**: contains output-plots.
 
 ## Authors
-- Dani van Enk
-- Michael Faber
+- Dani van Enk, 11823526
+- Michael Faber, 6087582
