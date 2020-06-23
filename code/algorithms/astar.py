@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 astar.py uses A* algorithm to give back fastest line between stations
-Michael Faber, 6087582
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 from geopy import distance
@@ -26,13 +27,13 @@ class A_Star():
 
     property:
         result              - returns result or list of results;
-        speed               - returns speed as a float number;
 
     methods:
         update_result       - updates result according to number_of_results;
         time_per_km         - returns lowest duration divided by distance;
         station_distance    - returns distance between two stations in km;
         copy_connections    - copies connections from one line to another;
+        choose_best_option  - returns best option for chosen method;
         add_choice          - adds choice to choices;
         new_line            - creates new line and adds to choices;
         create_line         - returns shortest line(s) between two stations;
@@ -57,10 +58,18 @@ class A_Star():
 
     @property
     def result(self):
+        """
+        returns result or list of results
+        """
+
         return self._result
 
     @result.setter
     def result(self, value):
+        """
+        set result
+        """
+
         self._result = value
 
     def update_result(self, best_option):
@@ -75,16 +84,13 @@ class A_Star():
             self.result = best_option
 
         else:
+
             # Add best line to results for number_of_results times
             self._result.append(best_option)
 
-    @property
-    def speed(self):
-        return self._speed
-
     def time_per_km(self):
         """
-        Gives back the fastest time a train in connections does over 1 km.
+        Returns the fastest time a train in connections does over 1 km.
         """
 
         # Create empty list for time per km for every connection
@@ -114,6 +120,8 @@ class A_Star():
         parameters:
             station1    - station of Station class;
             station2    - station of Station class;
+
+        returns distance in kilometer
         """
 
         return distance.distance(station1.position, station2.position).km
@@ -126,9 +134,40 @@ class A_Star():
             new_line    - line where the connections will be added to;
             old_line    - line where the connections will be copied from;
         """
+
         for old_connection in old_line.connections:
             new_line.add_connection(old_connection,
                                     self._max_duration)
+
+    def choose_best_option(self, method="min"):
+        """
+        returns best option for chosen method
+
+        parameter:
+            method  - method used (min, max, minconnections, maxconnections);
+
+        returns chosen line
+        """
+
+        # If method is min, return min
+        if method == "min":
+            return min(self._choices, key=self._choices.get)
+
+        # If method is max, return max
+        elif method == "max":
+            return max(self._choices, key=self._choices.get)
+
+        # If method is minconnections, return min connections
+        elif method == "minconnections":
+            return min(self._choices, key=lambda x: len(x.connections))
+
+        # If method is maxconnections, return max connections
+        elif method == "maxconnections":
+            return max(self._choices, key=lambda x: len(x.connections))
+
+        # If other method is specified, print error
+        else:
+            print("Give a valid method")
 
     def add_choice(self, line, station2):
         """
@@ -141,7 +180,7 @@ class A_Star():
 
         # Add minimal duration to get to station2
         line.penalty = self.station_distance(
-                        line.stations[-1], station2) * self.speed
+                        line.stations[-1], station2) * self._speed
 
         # Add line to choices with sum of duration and
         # minimal duration if less than max duration
@@ -192,6 +231,8 @@ class A_Star():
         parameters:
             station1    - station where pathfinding starts;
             station2    - station where pathfinding is going to;
+
+        returns a single or list of lines between two stations
         """
 
         # return line with station1 if both stations are equal
@@ -202,9 +243,9 @@ class A_Star():
         c = 0
 
         # Set variables
-        speed = self._speed
-        total_duration = self.station_distance(station1, station2) * speed
         self._choices = dict()
+        total_duration = self.station_distance(station1, station2) * \
+            self._speed
 
         # If total_duration is shorter or equal to max_duration, run function
         if total_duration <= self._max_duration:
@@ -217,7 +258,7 @@ class A_Star():
             while self._choices:
 
                 # Choose the option with lowest corrected duration
-                best_option = min(self._choices, key=self._choices.get)
+                best_option = self.choose_best_option("max")
 
                 # choose the last station from best_option
                 station = best_option.stations[-1]

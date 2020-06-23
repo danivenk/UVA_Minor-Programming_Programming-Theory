@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 plot_lines.py contains methods that can be used
@@ -14,8 +12,8 @@ methods:
     random_color    - returns random RGB-values to make color.
 
 authors:
-    Michael Faber, 6087582
     Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # imports
@@ -56,7 +54,7 @@ def plot_map(stations, connections, lines, area, output_path="./output/"):
     else:  # if area == "Nationaal":
         land_color = tuple(i/255. for i in ImageColor.getrgb("#E06"))
         marker_size = 5
-        line_size = 1
+        line_size = .75
 
     # predefine used colors
     used_colors = []
@@ -72,8 +70,8 @@ def plot_map(stations, connections, lines, area, output_path="./output/"):
         connect_lat = [station.position[1] for station in connection.section]
 
         # Plot connection
-        ax.plot(connect_long, connect_lat, linewidth=line_size, color="grey",
-                alpha=0.5, zorder=1)
+        ax.plot(connect_long, connect_lat, linewidth=line_size,
+                color="lightgrey", alpha=0.5, zorder=1)
 
     # Create lists of x and y values from the coordinates of all stations
     station_long = [station.position[0] for station in stations.values()]
@@ -240,6 +238,8 @@ def ofset_dict(lines):
 
     parameter:
         lines   - all lines that are plotted
+
+    returns dictionary with ofset for every connection in every line
     """
 
     # Create empty dictionary
@@ -289,4 +289,5 @@ def random_color():
     """
     Return random RGB-values to make color.
     """
+
     return (random.random(), random.random(), random.random())

@@ -3,7 +3,10 @@
 """
 version: python 3.8
 main.py runs the main app
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # used imports
@@ -12,7 +15,8 @@ import csv
 import matplotlib.pyplot as plt
 
 from code.data_loader.load_data import load
-from code.algorithms import Random_Connections, Greedy, Hill_Climber
+from code.algorithms import Random_Connections, Greedy, Hill_Climber, \
+                            Simulated_Annealing
 from code.visualization.plot_lines import plot_map
 from code.classes import Arg
 
@@ -172,7 +176,8 @@ def create_lines(connections, **kwargs):
 
     # define all algorithm options
     algorithms = {"random": Random_Connections, "greedy": Greedy,
-                  "hill_climber": Hill_Climber}
+                  "hill_climber": Hill_Climber,
+                  "simulated_annealing": Simulated_Annealing}
 
     # run the specified algorithm
     algorithm = algorithms[kwargs["algorithm"].lower()](

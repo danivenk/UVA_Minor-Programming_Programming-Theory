@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 arg_class.py defines the Arg class for the input of the command line
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 

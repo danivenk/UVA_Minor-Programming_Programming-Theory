@@ -4,5 +4,6 @@ testing
 test.py
 *.drawio
 output/*
+debug/
 
 !output/README.md

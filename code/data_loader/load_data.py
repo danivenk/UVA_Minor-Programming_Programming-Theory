@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 load_data.py defines the load function to load data from data/
     (only when the files have the correct name style)
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # used imports

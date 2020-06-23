@@ -5,3 +5,4 @@ descartes >= 1.1.0
 wcag-contrast-ratio
 pillow
 geopy
+progressbar

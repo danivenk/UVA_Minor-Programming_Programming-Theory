@@ -32,7 +32,9 @@ conda install --file requirements.txt
 ```
 
 ### Usage
-To run this program you could use the function main.py that needs 3 input arguments. First the name of an area is needed. You could use 'Holland' to calculate the lines for Noord- and Zuid-Holland and 'Nationaal' to calculate the lines of the Netherlands. The second argument needed is the Maximum number of minutes that a train can ride on a line. The last argument is the number of lines the function needs to calculate.
+To run this program you could use the function main.py that has four required input arguments and two optional. First the name of an area (-a) is needed. You could use "Holland" to calculate the lines for Noord- and Zuid-Holland and "Nationaal: to calculate the lines for the Netherlands. The second argument needed (-d) is the Maximum number of minutes that a train can ride on a line. The third argument (-L) is the number of lines the function needs to calculate. The final required input argument (-A) is the algorithm that is going to be used to create the lines. The algorithms that can be used are "random", "greedy", "hill_climber", "simulated_annealing".
+
+The first optional option (-r) is the amount of runs an algorithm must be used. More runs might give higher scores. The second optional option (-i) is the number of iterations the Hill Climber uses in every run.
 
 ```
 usage python3 main.py [options]
@@ -52,7 +54,7 @@ optional options:
 When filled in, it will look something like this:
 
 ```
-python3 main.py -a Holland -d 120 -L 7 -A Random -r 1000
+python3 main.py -a "Holland" -d 120 -L 7 -A "random" -r 1000
 ```
 
 ### Output

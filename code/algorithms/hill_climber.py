@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 hill_climber.py defines the Hill Climbing algorithm
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 
@@ -217,6 +218,9 @@ class Hill_Climber(Random_Connections):
         returns None if failed, state if successful
         """
 
+        if len(lines) <= 1:
+            None
+
         # get random line
         line = rd.choice(lines)
 
@@ -253,6 +257,9 @@ class Hill_Climber(Random_Connections):
         returns lines back or None if failed
         """
 
+        if len(lines) <= 1:
+            None
+
         # choose random line_index from lines
         line_index = rd.randint(0, len(lines) - 1)
 
@@ -287,6 +294,9 @@ class Hill_Climber(Random_Connections):
 
         returns None if failed, lines if successful
         """
+
+        if len(lines) <= 1:
+            None
 
         # define empty used_connections set
         used_connections = set()
@@ -364,6 +374,9 @@ class Hill_Climber(Random_Connections):
         returns back lines
         """
 
+        if len(lines) <= 1:
+            None
+
         # choose random line_index
         line_index = rd.randint(0, len(lines) - 1)
 
@@ -410,7 +423,7 @@ class Hill_Climber(Random_Connections):
         # repeat the algorithm as many times as specified
         for run in range(repeat):
             # loop for each iteration
-            for i in range(iterations):
+            for iteration in range(iterations):
 
                 # create a copy of the current state
                 state = copy.deepcopy(self._current_state)
@@ -438,7 +451,7 @@ class Hill_Climber(Random_Connections):
 
                 # add result to results attribute and save score/iterations
                 self._result.append(self._current_state)
-                self._scores[run]["iterations"].append(i)
+                self._scores[run]["iterations"].append(iteration)
                 self._scores[run]["scores"].append(self._current_state[1])
 
                 # save the 5 best results
@@ -446,7 +459,7 @@ class Hill_Climber(Random_Connections):
                                       reverse=True)[:5]
 
                 # update progress bar
-                bar.update(run*iterations + i + 1)
+                bar.update(run*iterations + iteration + 1)
 
         # finish progress bar
         bar.finish()

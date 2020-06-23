@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 line_class.py defines the Line classe used for the database
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # import used classes
