@@ -38,16 +38,17 @@ class Greedy(Random_Connections):
             connection_list     - list of all connections that are not used
         """
 
-        # Keep trying
-        while True:
+        # Choose random start connection
+        start_connection = rd.choice(self._connections)
 
-            # Choose random starting point
+        # While start connection is already used
+        while str(start_connection) not in connection_list:
+
+            # Choose random start connection
             start_connection = rd.choice(self._connections)
 
-            # Check if starting point has not been used yet
-            if str(start_connection) in connection_list:
-                connection_list.remove(str(start_connection))
-                break
+        # Delete chosen start connection from connection list
+        connection_list.remove(str(start_connection))
 
         return start_connection, connection_list
 
