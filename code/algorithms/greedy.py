@@ -24,9 +24,68 @@ class Greedy(Random_Connections):
         max_n_of_l      - maximal number of lines;
 
     methods:
+       choose_start     - returns starting connection that has not been used;
+       add_options      - add as much greedy options as possible to line;
        create_line      - creates a single line using greedy algorithm;
        run              - runs the algorithm a number of times
     """
+
+    def choose_start(self, connection_list):
+        """
+        Returns random starting connection that has not been used
+
+        parameter:
+            connection_list     - list of all connections that are not used
+        """
+
+        # Keep trying
+        while True:
+
+            # Choose random starting point
+            start_connection = rd.choice(self._connections)
+
+            # Check if starting point has not been used yet
+            if str(start_connection) in connection_list:
+                connection_list.remove(str(start_connection))
+                break
+
+        return start_connection, connection_list
+
+    def add_options(self, line, connection_list):
+        """
+        Add as much greedy options as possible to line
+
+        parameters:
+            line            - line with only start connection added;
+            connection_list - list with all possible connections;
+        """
+
+        # While current + shortest duration is shorter than max duration
+        while (line.duration + min(line.get_all_options().keys(),
+               key=lambda x: x.duration).duration <= self._max_duration):
+
+            # Get all options
+            options = [option for sublist in line.get_begin_end_options()
+                       for option in sublist]
+
+            # Get all options that have not been ridden
+            updated_options = [option for option in options if str(option)
+                               in connection_list]
+
+            # Choose the updated option with shortest duration
+            if updated_options:
+                best_option = min(updated_options,
+                                  key=lambda x: x.duration)
+                connection_list.remove(str(best_option))
+
+            # If there are no updated options stop the line
+            else:
+                break
+
+            # Add extra connection to line
+            line.add_connection(best_option, self._max_duration)
+
+        return line, connection_list
 
     def create_line(self, uid, connection_list):
         '''
@@ -38,55 +97,20 @@ class Greedy(Random_Connections):
         '''
 
         # Set variables
-        state = 0
         line = Line(uid)
 
-        # Loop till broken
-        while True:
-
-            # Choose random starting point
-            start_connection = rd.choice(self._connections)
-
-            # Check if starting point has not been used yet
-            if str(start_connection) in connection_list:
-                connection_list.remove(str(start_connection))
-                break
-
-            # if there are no connections to start from change state to 1
-            elif not connection_list:
-                state = 1
-                break
-
         # If there is a startpoint
-        if state == 0:
+        if connection_list:
+
+            # Add startpoint
+            start_connection, connection_list = \
+                    self.choose_start(connection_list)
 
             # Add first connection
             line.add_connection(start_connection, self._max_duration)
 
-            # While current + shortest duration is shorter than max duration
-            while (line.duration + min(line.get_all_options().keys(),
-                   key=lambda x: x.duration).duration <= self._max_duration):
-
-                # Get all options
-                options = [option for sublist in line.get_begin_end_options()
-                           for option in sublist]
-
-                # Get all options that have not been ridden
-                updated_options = [option for option in options if str(option)
-                                   in connection_list]
-
-                # Choose the updated option with shortest duration
-                if updated_options:
-                    best_option = min(updated_options,
-                                      key=lambda x: x.duration)
-                    connection_list.remove(str(best_option))
-
-                # If there are no updated options stop the line
-                else:
-                    break
-
-                # Add extra connection to line
-                line.add_connection(best_option, self._max_duration)
+            # Add other connections
+            line, connection_list = self.add_options(line, connection_list)
 
         # If there are no starting options return empty line
         else:
