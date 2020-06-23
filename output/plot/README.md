@@ -1,4 +1,4 @@
-# RailNL - ![Logo](../doc/img/logo_without_name.svg) Shibayama (芝山)
+# RailNL - ![Logo](../../doc/img/logo_without_name.svg) Shibayama (芝山)
 -------------------------------------------
 This folder contains the plots made by this program
 
