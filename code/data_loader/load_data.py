@@ -1,10 +1,11 @@
-#!/usr/bin/env python3.8
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 load_data.py defines the load function to load data from data/
     (only when the files have the correct name style)
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # used imports
@@ -13,33 +14,45 @@ from code.classes import Station, Connection
 
 
 def load(stations_file, connections_file):
+    """
+    loads data files into database
 
-    PATH_Stations = stations_file
-    PATH_Connections = connections_file
+    parameters:
+        stations_file    - path to the stations file;
+        connections_file - path to the connections file;
 
+    returns stations dictionary and connection list
+    """
+
+    # make sure stations file exists
     try:
 
         # get csv reader object from the datafile
         stations_reader = csv.reader(
-            open(PATH_Stations, "r", encoding="utf-8"), delimiter=",")
+            open(stations_file, "r", encoding="utf-8"), delimiter=",")
 
+        # skip header
         next(stations_reader)
 
     except FileNotFoundError:
-        exit(f"{PATH_Stations} not found")
+        exit(f"{stations_file} not found")
 
+    # make sure connections file exists
     try:
 
         # get csv reader object from the datafile
         connections_reader = csv.reader(
-            open(PATH_Connections, "r", encoding="utf-8"), delimiter=",")
+            open(connections_file, "r", encoding="utf-8"), delimiter=",")
 
+        # skip header
         next(connections_reader)
 
     except FileNotFoundError:
-        exit(f"{PATH_Connections} not found")
+        exit(f"{connections_file} not found")
 
-    stations = {name: Station(name, lat, long) for name, lat, long in stations_reader}
+    # add stations and connections to database
+    stations = {name: Station(name, lat, long)
+                for name, lat, long in stations_reader}
     connections = [Connection(stations[start], stations[end], duration)
                    for start, end, duration in connections_reader]
 

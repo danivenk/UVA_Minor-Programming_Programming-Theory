@@ -1,9 +1,10 @@
-#!/usr/bin/env python3.8
-# -*- coding: utf-8 -*-
 """
 version: python 3.8
 station_class.py defines the Station class used for the database
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # import used classes
@@ -16,26 +17,28 @@ class Station():
 
     parameters:
         name    - name of the station;
-        x       - longitude position of the station;
-        y       - latitiude position of the station;
+        lat     - longitude position of the station;
+        long    - latitiude position of the station;
 
     properties:
         position        - returns the longitude and latitude of the station;
         connections     - returns all all connections of this station;
-            setter: connection is of type Conenction
+
+    method:
+        add_connection - add connection to this stop;
     """
 
     def __init__(self, name, lat, long):
         """
         initialize a station
 
-        paramters:
+        parameters:
             name    - name of the station;
             lat     - latitude position of the station;
             long    - longitude position of the station;
         """
 
-        # make sure x/y are floats and name is a string
+        # make sure lat/long are floats and name is a string
         try:
             assert type(name) is str
             lat = float(lat)
@@ -64,13 +67,8 @@ class Station():
         return the connections of this station
         """
 
-        # for connection, stationto in self._connections.items():
-        #     if self == stationto:
-        #         print("from: ", self, "to: ", stationto)
-
         return self._connections
 
-    @connections.setter
     def add_connection(self, connection):
         """
         adds a connection to this stop
@@ -85,7 +83,7 @@ class Station():
         except AssertionError:
             exit("StationAddConnectionError: please make sure connection is "
                  "a Connection object")
-        
+
         # define the section of this connection
         section = connection.section
 
@@ -96,22 +94,22 @@ class Station():
         # add the station of this connection which is not this station
         for station in section:
             if station is not self:
-                self._connections[connection] = station
+                self._connections[connection.cid] = [connection, station]
 
     def __repr__(self):
-    #     """
-    #     return the correct representation of the Station class
-    #     """
+        """
+        return the correct representation of the Station class
+        """
 
-    #     return f"{self._name} at position " \
-    #         f"(long: {self._longitude}, lat: {self._latitude})"
-    
-    # def __str__(self):
-    #     """
-    #     return the string format of the Station class
-    #     """
+        return f"{self._name} at position " \
+            f"(long: {self._longitude}, lat: {self._latitude})"
+
+    def __str__(self):
+        """
+        return the string format of the Station class
+        """
 
         return self._name
 
     def __eq__(self, other):
-        return self._name == other
+        return self._name == other._name

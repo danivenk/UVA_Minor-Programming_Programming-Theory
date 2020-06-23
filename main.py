@@ -1,119 +1,208 @@
-#!/usr/bin/env python3.8
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 version: python 3.8
 main.py runs the main app
-Dani van Enk, 11823526
+
+authors:
+    Dani van Enk, 11823526
+    Michael Faber, 6087582
 """
 
 # used imports
 import sys
-import os
 import csv
-import time
-import math
+import matplotlib.pyplot as plt
+
+from code.data_loader.load_data import load
+from code.algorithms import Random_Connections, Greedy, Hill_Climber, \
+                            Simulated_Annealing
+from code.visualization.plot_lines import plot_map
+from code.classes import Arg
 
 
 def main(argv):
+    """
+    run main part of the code
+    """
 
-    if len(argv) != 3 or "-h" in argv or "--help" in argv:
-        exit("usage ./create_lines.py <area> <duration> <no_of_lines>")
+    # define commandline arguments
+    arguments = [Arg(("-h", "--help"), "Prints this message", True),
+                 Arg(("-a", "--area"), "Area run the algorithms for"),
+                 Arg(("-d", "--duration"), "Max duration for one line",
+                     argument_type="int"),
+                 Arg(("-L", "--lines"), "Max no. of lines",
+                     argument_type="int"),
+                 Arg(("-r", "--repeat"), "No. of repetitions",
+                     argument_type="int"),
+                 Arg(("-i", "--iterations"), "No. of iterations per run", True,
+                     "int"),
+                 Arg(("-A", "--algorithm"), "Algorithm to run")]
 
-    area = argv[0]
+    # print help function if help parameters are present or no arguments given
+    if len(argv) == 0 or "-h" in argv or "--help" in argv:
+        print_help(arguments)
 
-    try:
-        duration = int(argv[1])
-        n_of_l = int(argv[2])
-    except ValueError:
-        exit("make sure duration and no_of_lines are integers")
+    # create empty set for argument options
+    argument_options = ()
 
-    stations_file = f"data/Stations{area}.csv"
-    connections_file = f"data/Connecties{area}.csv"
+    # add all argument aliases to argument_options
+    for argument in arguments:
+        argument_options += argument.aliases
 
+    # predefine user_input dictionary
+    user_input = dict()
+
+    # go over each argument
+    for arg in arguments:
+
+        # find the corresponding given values
+        for index in range(0, len(argv) - 1, 2):
+
+            # add to user_input if value is not argument_flag
+            if argv[index] in arg.aliases and \
+                    argv[index + 1] not in argument_options:
+                try:
+                    arg.value = argv[index + 1]
+                    user_input[arg.name] = arg.value
+                except IndexError:
+                    pass
+            # if value is argument flag print help function
+            elif argv[index + 1] in argument_options:
+                print_help(arguments)
+
+    # get stations/connections file paths
+    stations_file = f"data/Stations{user_input['area']}.csv"
+    connections_file = f"data/Connecties{user_input['area']}.csv"
+
+    # load stations and connections
     stations, connections = load(stations_file, connections_file)
 
-    max_duration = sum(connection.duration for connection in connections)
+    # create lines according to user parameters
+    lines, score, scores = create_lines(connections, **user_input)
 
-    min_no_of_l = math.ceil(max_duration/duration)
+    # plot the resulting line map
+    plot_map(stations, connections, lines, user_input['area'])
 
-    runs = None
-
-    # for n_of_l_index in range(n_of_l, min_no_of_l - 1, -1):
-    lines, score = create_lines(stations, connections, duration, n_of_l)
-
-        # if len(runs) <= 0:
-        #     runs.append((lines, score))
-        # elif runs[1] < score:
-        #     runs.append((lines, score))
-
-    # lines, score = runs[-1]
-
-    plot_map(stations, connections, lines, area)
-
-    output(lines, score)
+    # generate the output file and plot scores
+    output(lines, score, scores, user_input["algorithm"])
 
 
-def load_data(stations_file, connections_file):
+def print_help(arguments):
+    """
+    print help function
 
-    for item in load(stations_file, connections_file):
-        print(item)
-        for _ in range(10):
-            print("-", end="")
-        print()
+    parameters:
+        arguments - arguments to be printed
+    """
+
+    # print usage
+    print("usage python3 main.py [options]\n")
+
+    print("required options:")
+
+    # print required options
+    for argument in arguments:
+        if not argument.optional:
+            print(argument)
+
+    print()
+    print("optional options:")
+
+    # print optional options
+    for argument in arguments:
+        if argument.optional:
+            print(argument)
+
+    print()
+
+    # exit
+    exit()
 
 
-def output(lines, score):
+def output(lines, score, scores, algorithm):
+    """
+    generate output file and plot scores
+
+    parameters:
+        lines       - lines for optimal solution;
+        score       - best score for the lines;
+        scores      - dictionary of all scores generated by the algorithm runs;
+        algorithm   - algorithm used;
+    """
+
+    # create an output file
     output_writer = csv.writer(open("output/output.csv", "w"), delimiter=",")
 
+    # write header
     output_writer.writerow(["train", "stations"])
 
+    # add solution
     for index, line in enumerate(lines):
-        output_writer.writerow([f"train_{index + 1}",line.stations])
+        stations_string = ', '.join(str(station) for station in line.stations)
+        output_writer.writerow([f"train_{index + 1}",
+                                f"[{stations_string}]"])
 
+    # add score
     output_writer.writerow(["score", score])
 
+    # plot scores in histogram
+    plt.figure()
+    for n_of_l in scores:
+        score_list = scores[n_of_l]["scores"]
 
-def create_lines(stations, connections, duration, n_of_l):
+        plt.hist(score_list, bins=[i for i in range(0, 10000, 100)],
+                 histtype="stepfilled")
+    plt.savefig(f"output/{algorithm}plot.png")
+    plt.clf()
 
-    random = Random_Connections(connections, duration, n_of_l)
 
-    lines, K, p = random.run(10000)[0]
+def create_lines(connections, **kwargs):
+    """
+    create lines according to user parameters
 
+    parameters:
+        connections - connections in dataset;
+        **kwargs    - argument dict;
+    """
+
+    # define required kwargs
+    required = ["algorithm", "duration", "lines", "repeat"]
+
+    # check if all required are present in kwargs
+    for item in required:
+        if item not in kwargs.keys():
+            exit("make sure algorithm, duration and lines")
+
+    # define all algorithm options
+    algorithms = {"random": Random_Connections, "greedy": Greedy,
+                  "hill_climber": Hill_Climber,
+                  "simulated_annealing": Simulated_Annealing}
+
+    # run the specified algorithm
+    algorithm = algorithms[kwargs["algorithm"].lower()](
+        connections, kwargs["duration"], kwargs["lines"])
+
+    # if iteration is specified run multiple
+    try:
+        lines, K, p = algorithm.run(kwargs["repeat"], kwargs["iterations"])[0]
+    except KeyError:
+        lines, K, p = algorithm.run(kwargs["repeat"])[0]
+
+    # get score
+    scores = algorithm.scores
+
+    # print stations/duration/score/coverage of solution
     for line in lines:
         print(", ".join(str(station) for station in line.stations))
         print(f"Duration {int(line.duration)} min")
     print("K-score", int(K))
-    print(
-        f"sections traversed {p*len(connections):.0f}/{len(connections):.0f}")
+    print(f"sections traversed {p*len(connections):.0f}/"
+          f"{len(connections):.0f}")
 
-    return lines, K
-
-
-def calc_state_space(stations, connections, duration, n_of_l):
-
-    min_duration = min(connections, key=lambda x: x.duration).duration
-    max_connect_per_station = len(
-        max(stations.values(), key=lambda x: len(x.connections)).connections)
-    connect_per_line = duration / min_duration
-    state_space = n_of_l * (max_connect_per_station ** connect_per_line)
-
-    print("Max connections per Station", max_connect_per_station)
-    print("Minimal Duration", min_duration)
-    print("Max connections per Line", connect_per_line)
-    print("Number of Lines", n_of_l)
-    print(f"State space {state_space:1.3e}")
+    return lines, K, scores
 
 
+# if name is main run main()
 if __name__ == "__main__":
-
-    from code.data_loader.load_data import load
-    from code.algorithms import Random_Connections, Random_Relax_Connections
-    from code.visualization.plot_lines import plot_map
-
-    start = time.time_ns()
-
     main(sys.argv[1:])
-
-    end = time.time_ns()
-
-    print(f"{(end-start) / 1e9} s")
