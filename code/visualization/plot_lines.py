@@ -9,7 +9,9 @@ methods:
     line_coords     - returns start and end values of connection;
     ofset_dict      - returns dictionairy with connections and their ofsets;
     aspect_ratio    - returns ratio of latitude and longitude for use in map;
-    random_color    - returns random RGB-values to make color.
+    random_color    - returns random RGB-values to make color;
+    plot_iter_graph - plot graph with min, max and mean results per iteration;
+    scores2results  - calculates min, max and mean per iteration from scores;
 
 authors:
     Dani van Enk, 11823526
@@ -56,7 +58,7 @@ def plot_map(stations, connections, lines_solution,
     plt.axis("off")
 
     # Format Options of Holland and others
-    if kwargs["area"] == "holland":
+    if kwargs["area"].lower() == "holland":
         land_color = tuple(i/255. for i in ImageColor.getrgb("#0AE"))
         marker_size = 10
         line_size = 1
@@ -132,7 +134,7 @@ def plot_map(stations, connections, lines_solution,
         string += f"-{'_'.join(str(item) for item in items)}"
 
     # Save plot to png file
-    plt.savefig(f"{output_path}Map{string}.png", dpi=1000, format="png",
+    plt.savefig(f"{output_path}Map{string}.png", dpi=600, format="png",
                 transparent=True)
     print(f"Map-{kwargs['area']} is created.")
 
@@ -312,6 +314,11 @@ def random_color():
 
 def plot_iter_graph(scores, output_path="./output/plot/", **kwargs):
     """
+    Plot and save a graph with min, max, and mean results per iteration
+        
+    parameters:
+        scores          - dictionary with all results per iteration
+        output_path     - path with folder where plot is saved   
         kwargs          - contains the user input
     """
 
@@ -325,17 +332,21 @@ def plot_iter_graph(scores, output_path="./output/plot/", **kwargs):
             exit("make sure you have specified the area, duration, "
                  "lines, repeat, algorithm flags")
 
+    # Make new figure
+    fig = plt.figure()  
+    fig, ax = plt.subplots()
+
+    # Get results
     x, maxresults, meanresults, minresults = scores2results(scores)
 
-    fig = plt.figure()  # an empty figure with no Axes
-    fig, ax = plt.subplots()#figsize=() 25,10))#, dpi=400)  # a figure with a single Axes
-
+    # Plot results
     ax.fill_between(x, maxresults, meanresults, color="green", alpha=0.6)
     ax.fill_between(x, meanresults, minresults, color="red", alpha=0.6)
     ax.plot(x, maxresults, color="green")
     ax.plot(x, minresults, color="red")
     ax.plot(x, meanresults, color="black")
 
+    # Adjust x- and y-axis
     ax.set_xlim(0, kwargs["iterations"])
     ax.set_ylim(0, 10000)
     ax.set_ylabel("K-Score")
@@ -352,17 +363,30 @@ def plot_iter_graph(scores, output_path="./output/plot/", **kwargs):
 
 
 def scores2results(scores):
+    """
+    Calculates min, max and mean per iteration out of scores
+
+    parameter:
+        scores          - dictionary with all results per iteration
+
+    returns lists of x-values, min, max and mean y-values
+    """
+
+    # Set dict with nested list
     results = dict(list())
 
+    #Combine score of same iteration
     for i in range(len(scores[0]['scores'])):
         results[i] = []
         for r in range(len(scores)):
             results[i].append(scores[r]['scores'][i])
 
+    # Calculate output values
     x = range(len(results))
     maxresults = [max(results[i]) for i in range(len(results))]
     minresults = [min(results[i]) for i in range(len(results))]
     meanresults = [sum(results[i]) / len(results[i])
                    for i in range(len(results))]
 
+    # Return output values
     return x, maxresults, meanresults, minresults
