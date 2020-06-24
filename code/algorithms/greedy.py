@@ -56,7 +56,7 @@ class Greedy(Random_Connections):
         return start_connection, connection_list
 
     def choose_best_option(self, line, connection_list,
-                           method="min", one_time=True):
+                           method="min", one_time=False):
         """
         chooses best option according to different methods
 
@@ -120,11 +120,11 @@ class Greedy(Random_Connections):
             best_option = self.choose_best_option(line, connection_list)
 
             # If there is a best option delete from connection list
-            if best_option:
+            if str(best_option) in connection_list:
                 connection_list.remove(str(best_option))
 
             # If there are no best option stop the line
-            else:
+            elif not best_option:
                 break
 
             # Add extra connection to line
