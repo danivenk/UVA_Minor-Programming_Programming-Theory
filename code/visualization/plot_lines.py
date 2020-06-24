@@ -28,25 +28,35 @@ from PIL import ImageColor
 from collections import defaultdict
 
 
-def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
+def plot_map(stations, connections, lines_solution,
+             output_path="./output/plot/", **kwargs):
     """
     Plot all the lines on a Map and save as png-file
 
     parameters:
         stations        - all stations in database;
         connections     - all connections in database;
-        lines           - the lines that are plotted;
-        area            - geographical area of lines;
+        lines_soltion   - the lines that are plotted;
         output_path     - folder where plot is saved;
+        kwargs          - contains the user input
     """
 
+    # required kwargs arguments
+    required = ["area", "duration", "lines", "repeat", "algorithm"]
+
+    # make sure kwargs requirements are defined
+    for item in required:
+        if item not in kwargs:
+            exit("make sure you have specified the area, duration, "
+                 "lines, repeat, algorithm flags")
+
     # Create Figure and Axe
-    fig = plt.figure(dpi=600)
+    fig = plt.figure(dpi=1000)
     fig, ax = plt.subplots()
     plt.axis("off")
 
     # Format Options of Holland and others
-    if area == "Holland":
+    if kwargs["area"] == "holland":
         land_color = tuple(i/255. for i in ImageColor.getrgb("#0AE"))
         marker_size = 10
         line_size = 1
@@ -60,18 +70,18 @@ def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
     used_colors = []
 
     # Plot Background using geopandas
-    gpd_map(area).plot(ax=ax, color=land_color)
+    gpd_map(kwargs["area"]).plot(ax=ax, color=land_color)
 
     # For-loop to get each individual connection between stations
-    for connection in connections:
+    # for connection in connections:
 
-        # Create tuples of x and y using coordinates of begin- and end station
-        connect_long = [station.position[0] for station in connection.section]
-        connect_lat = [station.position[1] for station in connection.section]
+    # Create tuples of x and y using coordinates of begin- and end station
+    # connect_long = [station.position[0] for station in connection.section]
+    # connect_lat = [station.position[1] for station in connection.section]
 
-        # Plot connection
-        ax.plot(connect_long, connect_lat, linewidth=line_size,
-                color="lightgrey", alpha=0.5, zorder=1)
+    # Plot connection
+    # ax.plot(connect_long, connect_lat, linewidth=line_size,
+    #         color="lightgrey", alpha=0.5, zorder=1)
 
     # Create lists of x and y values from the coordinates of all stations
     station_long = [station.position[0] for station in stations.values()]
@@ -81,10 +91,10 @@ def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
     ratio = aspect_ratio(station_lat)
 
     # Create a dictionary of connections that need ofset
-    ofset = ofset_dict(lines)
+    ofset = ofset_dict(lines_solution)
 
     # For-loop to get each single line
-    for line_number in range(len(lines)):
+    for line_number in range(len(lines_solution)):
 
         # generate random color
         color = random_color()
@@ -97,7 +107,7 @@ def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
         used_colors.append(color)
 
         # For-loop to get each connection in a line
-        for connection in list(set(lines[line_number].connections)):
+        for connection in list(set(lines_solution[line_number].connections)):
 
             # Get the adjusted longitude and latitude
             longitude, latitude = line_coords(connection, ofset, ratio,
@@ -114,10 +124,17 @@ def plot_map(stations, connections, lines, area, output_path="./output/plot/"):
     # Set aspect using ratio value
     ax.set_aspect(ratio)
 
+    # create empty string
+    string = ""
+
+    # create string containing user input values
+    for items in kwargs.items():
+        string += f"-{'_'.join(str(item) for item in items)}"
+
     # Save plot to png file
-    plt.savefig(f"{output_path}Map-{area}.png", dpi=300, format="png",
+    plt.savefig(f"{output_path}Map{string}.png", dpi=1000, format="png",
                 transparent=True)
-    print(f"Map-{area} is created.")
+    print(f"Map-{kwargs['area']} is created.")
 
 
 def gpd_map(area, path="./data/shapefile/NLD_adm1.dbf"):
@@ -293,36 +310,59 @@ def random_color():
     return (random.random(), random.random(), random.random())
 
 
-def plot_iter_graph(scores, name="HC", output_path="./output/plot/"):
+def plot_iter_graph(scores, output_path="./output/plot/", **kwargs):
+    """
+        kwargs          - contains the user input
+    """
+
+    # required kwargs arguments
+    required = ["area", "duration", "lines", "repeat", "algorithm",
+                "iterations"]
+
+    # make sure kwargs requirements are defined
+    for item in required:
+        if item not in kwargs:
+            exit("make sure you have specified the area, duration, "
+                 "lines, repeat, algorithm flags")
+
     x, maxresults, meanresults, minresults = scores2results(scores)
-    
+
     fig = plt.figure()  # an empty figure with no Axes
     fig, ax = plt.subplots()#figsize=() 25,10))#, dpi=400)  # a figure with a single Axes
 
-    ax.plot(x,maxresults, color="green")
-    ax.fill_between(x,maxresults,meanresults, color="green", alpha=0.6)
-    ax.plot(x,meanresults, color="black")
-    ax.fill_between(x,meanresults,minresults, color="red", alpha=0.6)
-    ax.plot(x,minresults, color="red")
+    ax.fill_between(x, maxresults, meanresults, color="green", alpha=0.6)
+    ax.fill_between(x, meanresults, minresults, color="red", alpha=0.6)
+    ax.plot(x, maxresults, color="green")
+    ax.plot(x, minresults, color="red")
+    ax.plot(x, meanresults, color="black")
 
-    ax.xlim=(min(x),max(x))
+    ax.set_xlim(0, kwargs["iterations"])
+    ax.set_ylim(0, 10000)
     ax.set_ylabel("K-Score")
     ax.set_xlabel("# Iterations")
 
-    plt.savefig(f"{output_path}Graph-{name}.png", dpi=300, format="png")
+    # create empty string
+    string = ""
+
+    # create string containing user input values
+    for items in kwargs.items():
+        string += f"-{'_'.join(str(item) for item in items)}"
+
+    plt.savefig(f"{output_path}Graph{string}.png", dpi=600, format="png")
+
 
 def scores2results(scores):
     results = dict(list())
 
-
     for i in range(len(scores[0]['scores'])):
         results[i] = []
-        for r in  range(len(scores)):
+        for r in range(len(scores)):
             results[i].append(scores[r]['scores'][i])
-    
-    x= range(len(results))
+
+    x = range(len(results))
     maxresults = [max(results[i]) for i in range(len(results))]
     minresults = [min(results[i]) for i in range(len(results))]
-    meanresults = [sum(results[i]) / len(results[i]) for i in range(len(results))]
+    meanresults = [sum(results[i]) / len(results[i])
+                   for i in range(len(results))]
 
     return x, maxresults, meanresults, minresults
