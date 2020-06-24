@@ -59,7 +59,7 @@ class Greedy(Random_Connections):
         return start_connection, connection_list
 
     def choose_best_option(self, line, connection_list,
-                           method="min", one_time=False):
+                           method="min", one_time=True):
         """
         chooses best option according to different methods
 
@@ -89,14 +89,6 @@ class Greedy(Random_Connections):
             # If method is max, return max
             elif method == "max":
                 return min(options, key=lambda x: x.duration)
-
-            # If method is minconnections, return min connections
-            elif method == "minconnections":
-                return min(options, key=lambda x: len(x.connections))
-
-            # If method is maxconnections, return max connections
-            elif method == "maxconnections":
-                return max(options, key=lambda x: len(x.connections))
 
             # If other method is specified, print error
             else:
