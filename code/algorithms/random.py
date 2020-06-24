@@ -146,6 +146,10 @@ class Random_Connections():
             exit("RunError: please make sure you've entered a int "
                  "for the number of repeats")
 
+        # reset the result list and scores dict
+        self._result = []
+        self._scores = defaultdict(lambda: defaultdict(list))
+
         # show progress bar
         if progress_bar:
 

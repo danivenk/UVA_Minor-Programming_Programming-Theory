@@ -7,9 +7,12 @@ authors:
     Michael Faber, 6087582
 """
 
+# used imports
 import random as rd
 import copy
 import progressbar as pbar
+
+from collections import defaultdict
 
 from code.classes import Line
 from code.algorithms import Random_Connections
@@ -183,6 +186,10 @@ class Greedy(Random_Connections):
 
         # print running parameters
         print(f"Runing, Greedy {repeat} times")
+
+        # reset the result list and scores dict
+        self._result = []
+        self._scores = defaultdict(lambda: defaultdict(list))
 
         # define the progress bar widgets
         bar_widgets = [pbar.Bar("#", "[", "]"), " ", pbar.ETA()]

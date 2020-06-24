@@ -13,6 +13,8 @@ import random as rd
 import copy
 import progressbar as pbar
 
+from collections import defaultdict
+
 from code.algorithms import Random_Connections, A_Star
 from code.visualization.plot_lines import plot_iter_graph
 from code.classes import Line
@@ -413,6 +415,10 @@ class Hill_Climber(Random_Connections):
         # print running paramters
         print(f"Runing, Hill Climber {repeat} times with "
               f"{iterations} iterations per run")
+
+        # reset the result list and scores dict
+        self._result = []
+        self._scores = defaultdict(lambda: defaultdict(list))
 
         # define the progressbar widgets
         bar_widgets = [pbar.Bar("#", "[", "]"), " ", pbar.ETA()]

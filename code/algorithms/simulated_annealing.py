@@ -13,6 +13,8 @@ import random as rd
 import copy
 import progressbar as pbar
 
+from collections import defaultdict
+
 from code.algorithms import Hill_Climber
 
 
@@ -87,6 +89,10 @@ class Simulated_Annealing(Hill_Climber):
         except ValueError:
             exit("RunError: please make sure you've entered a integer "
                  "for the number of repeats and iterations")
+
+        # reset the result list and scores dict
+        self._result = []
+        self._scores = defaultdict(lambda: defaultdict(list))
 
         # print running paramters
         print(f"Runing, Simulated Annealing {repeat} times with "
