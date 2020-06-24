@@ -291,3 +291,37 @@ def random_color():
     """
 
     return (random.random(), random.random(), random.random())
+
+def plot_iter_graph(scores, name="HC", output_path="./output/plot/"):
+    x, maxresults, meanresults, minresults = scores2results(scores)
+    
+    fig = plt.figure()  # an empty figure with no Axes
+    fig, ax = plt.subplots()#figsize=() 25,10))#, dpi=400)  # a figure with a single Axes
+
+    ax.plot(x,maxresults, color="green")
+    ax.fill_between(x,maxresults,meanresults, color="green", alpha=0.6)
+    ax.plot(x,meanresults, color="black")
+    ax.fill_between(x,meanresults,minresults, color="red", alpha=0.6)
+    ax.plot(x,minresults, color="red")
+
+    ax.xlim=(min(x),max(x))
+    ax.set_ylabel("K-Score")
+    ax.set_xlabel("# Iterations")
+
+    plt.savefig(f"{output_path}Graph-{name}.png", dpi=300, format="png")
+
+def scores2results(scores):
+    results = dict(list())
+
+
+    for i in range(len(scores[0]['scores'])):
+        results[i] = []
+        for r in  range(len(scores)):
+            results[i].append(scores[r]['scores'][i])
+    
+    x= range(len(results))
+    maxresults = [max(results[i]) for i in range(len(results))]
+    minresults = [min(results[i]) for i in range(len(results))]
+    meanresults = [sum(results[i]) / len(results[i]) for i in range(len(results))]
+
+    return x, maxresults, meanresults, minresults

@@ -14,6 +14,7 @@ import copy
 import progressbar as pbar
 
 from code.algorithms import Random_Connections, A_Star
+from code.visualization.plot_lines import plot_iter_graph
 from code.classes import Line
 
 
@@ -463,5 +464,7 @@ class Hill_Climber(Random_Connections):
 
         # finish progress bar
         bar.finish()
+
+        plot_iter_graph(self._scores)
 
         return self._result
