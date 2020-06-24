@@ -73,15 +73,15 @@ def plot_map(stations, connections, lines_solution,
     gpd_map(kwargs["area"]).plot(ax=ax, color=land_color)
 
     # For-loop to get each individual connection between stations
-    for connection in connections:
+    # for connection in connections:
 
-        # Create tuples of x and y using coordinates of begin- and end station
-        connect_long = [station.position[0] for station in connection.section]
-        connect_lat = [station.position[1] for station in connection.section]
+    # Create tuples of x and y using coordinates of begin- and end station
+    # connect_long = [station.position[0] for station in connection.section]
+    # connect_lat = [station.position[1] for station in connection.section]
 
-        # Plot connection
-        # ax.plot(connect_long, connect_lat, linewidth=line_size,
-        #         color="lightgrey", alpha=0.5, zorder=1)
+    # Plot connection
+    # ax.plot(connect_long, connect_lat, linewidth=line_size,
+    #         color="lightgrey", alpha=0.5, zorder=1)
 
     # Create lists of x and y values from the coordinates of all stations
     station_long = [station.position[0] for station in stations.values()]
@@ -310,37 +310,59 @@ def random_color():
     return (random.random(), random.random(), random.random())
 
 
-def plot_iter_graph(scores, name="HC", output_path="./output/plot/"):
+def plot_iter_graph(scores, output_path="./output/plot/", **kwargs):
+    """
+        kwargs          - contains the user input
+    """
+
+    # required kwargs arguments
+    required = ["area", "duration", "lines", "repeat", "algorithm",
+                "iterations"]
+
+    # make sure kwargs requirements are defined
+    for item in required:
+        if item not in kwargs:
+            exit("make sure you have specified the area, duration, "
+                 "lines, repeat, algorithm flags")
 
     x, maxresults, meanresults, minresults = scores2results(scores)
-    
+
     fig = plt.figure()  # an empty figure with no Axes
     fig, ax = plt.subplots()#figsize=() 25,10))#, dpi=400)  # a figure with a single Axes
 
-    ax.plot(x,maxresults, color="green")
-    ax.fill_between(x,maxresults,meanresults, color="green", alpha=0.6)
-    ax.plot(x,meanresults, color="black")
-    ax.fill_between(x,meanresults,minresults, color="red", alpha=0.6)
-    ax.plot(x,minresults, color="red")
+    ax.fill_between(x, maxresults, meanresults, color="green", alpha=0.6)
+    ax.fill_between(x, meanresults, minresults, color="red", alpha=0.6)
+    ax.plot(x, maxresults, color="green")
+    ax.plot(x, minresults, color="red")
+    ax.plot(x, meanresults, color="black")
 
-    ax.xlim=(min(x),max(x))
+    ax.set_xlim(0, kwargs["iterations"])
+    ax.set_ylim(0, 10000)
     ax.set_ylabel("K-Score")
     ax.set_xlabel("# Iterations")
 
-    plt.savefig(f"{output_path}Graph-{name}.png", dpi=300, format="png")
+    # create empty string
+    string = ""
+
+    # create string containing user input values
+    for items in kwargs.items():
+        string += f"-{'_'.join(str(item) for item in items)}"
+
+    plt.savefig(f"{output_path}Graph{string}.png", dpi=600, format="png")
+
 
 def scores2results(scores):
     results = dict(list())
 
-
     for i in range(len(scores[0]['scores'])):
         results[i] = []
-        for r in  range(len(scores)):
+        for r in range(len(scores)):
             results[i].append(scores[r]['scores'][i])
-    
-    x= range(len(results))
+
+    x = range(len(results))
     maxresults = [max(results[i]) for i in range(len(results))]
     minresults = [min(results[i]) for i in range(len(results))]
-    meanresults = [sum(results[i]) / len(results[i]) for i in range(len(results))]
+    meanresults = [sum(results[i]) / len(results[i])
+                   for i in range(len(results))]
 
     return x, maxresults, meanresults, minresults

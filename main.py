@@ -167,7 +167,7 @@ def output(lines_solution, score, scores, **kwargs):
 
     # plot linegraph for HC and SA, histogram for random and greedy
     if algorithm == "hill_climber" or algorithm == "simulated_annealing":
-        plot_iter_graph(scores, name=algorithm)
+        plot_iter_graph(scores, **kwargs)
     else:
         # predefine upper bound for score
         score_upper = 0
@@ -214,7 +214,7 @@ def output(lines_solution, score, scores, **kwargs):
         plt.ylim(0,)
         plt.xlabel("K-score")
         plt.ylabel("# of K-score solutions")
-        plt.savefig(f"output/plot/plot{string}.png")
+        plt.savefig(f"output/plot/Graph{string}.png")
         plt.clf()
 
 
