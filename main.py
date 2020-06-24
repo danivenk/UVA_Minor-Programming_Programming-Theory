@@ -13,6 +13,7 @@ authors:
 import sys
 import csv
 import matplotlib.pyplot as plt
+import math
 
 from code.data_loader.load_data import load
 from code.algorithms import Random_Connections, Greedy, Hill_Climber, \
@@ -208,9 +209,12 @@ def output(lines_solution, score, scores, **kwargs):
             plt.hist(score_list, bins=[i for i in range(0, 10000, binsize)],
                      alpha=.9, label=f"{n_of_l} lines")
 
+        # ceil to nearest binmax
+        xlim_value = math.ceil(score_upper/binsize) * binsize
+
         # plot setup
         ax.legend()
-        plt.xlim(0, score_upper)
+        plt.xlim(0, xlim_value)
         plt.ylim(0,)
         plt.xlabel("K-score")
         plt.ylabel("# of K-score solutions")
