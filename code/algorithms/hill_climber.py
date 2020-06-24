@@ -221,7 +221,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # get random line
         line = rd.choice(lines)
@@ -260,7 +260,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # choose random line_index from lines
         line_index = rd.randint(0, len(lines) - 1)
@@ -298,7 +298,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # define empty used_connections set
         used_connections = set()
@@ -377,7 +377,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # choose random line_index
         line_index = rd.randint(0, len(lines) - 1)

@@ -292,6 +292,7 @@ def random_color():
 
     return (random.random(), random.random(), random.random())
 
+
 def plot_iter_graph(scores, name="HC", output_path="./output/plot/"):
     x, maxresults, meanresults, minresults = scores2results(scores)
     
