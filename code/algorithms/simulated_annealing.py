@@ -107,6 +107,10 @@ class Simulated_Annealing(Hill_Climber):
 
         # repeat the algorithm as many times as specified
         for run in range(repeat):
+
+            # reset the begin state
+            self._current_state = super().run(progress_bar=False)[0]
+
             # loop for each iteration
             for iteration in range(iterations):
 

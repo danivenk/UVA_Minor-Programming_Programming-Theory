@@ -428,6 +428,14 @@ class Hill_Climber(Random_Connections):
 
         # repeat the algorithm as many times as specified
         for run in range(repeat):
+
+            result = self._result
+
+            # reset the begin state
+            self._current_state = super().run(progress_bar=False)[0]
+
+            self._result = result
+
             # loop for each iteration
             for iteration in range(iterations):
 
