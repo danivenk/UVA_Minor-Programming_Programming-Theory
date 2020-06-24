@@ -146,13 +146,21 @@ def output(lines, score, scores, algorithm):
     # add score
     output_writer.writerow(["score", score])
 
+    score_upper = 0
+
     # plot scores in histogram
     plt.figure()
     for n_of_l in scores:
         score_list = scores[n_of_l]["scores"]
 
-        plt.hist(score_list, bins=[i for i in range(0, 10000, 100)],
-                 histtype="stepfilled")
+        score_upper_new = max(score_list)
+
+        if score_upper < score_upper_new:
+            score_upper = score_upper_new
+
+        plt.hist(score_list, bins=[i for i in range(0, 10000, 200)], histtype="stepfilled")
+    plt.xlim(0, score_upper)
+    plt.ylim(0,)
     plt.savefig(f"output/{algorithm}plot.png")
     plt.clf()
 

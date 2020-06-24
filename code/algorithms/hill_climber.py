@@ -16,7 +16,6 @@ import progressbar as pbar
 from collections import defaultdict
 
 from code.algorithms import Random_Connections, A_Star
-from code.visualization.plot_lines import plot_iter_graph
 from code.classes import Line
 
 
@@ -222,7 +221,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # get random line
         line = rd.choice(lines)
@@ -261,7 +260,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # choose random line_index from lines
         line_index = rd.randint(0, len(lines) - 1)
@@ -299,7 +298,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # define empty used_connections set
         used_connections = set()
@@ -378,7 +377,7 @@ class Hill_Climber(Random_Connections):
         """
 
         if len(lines) <= 1:
-            None
+            return None
 
         # choose random line_index
         line_index = rd.randint(0, len(lines) - 1)
@@ -470,7 +469,5 @@ class Hill_Climber(Random_Connections):
 
         # finish progress bar
         bar.finish()
-
-        plot_iter_graph(self._scores)
 
         return self._result
