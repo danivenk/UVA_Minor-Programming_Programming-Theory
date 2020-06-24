@@ -5,5 +5,7 @@ test.py
 *.drawio
 debug/
 output/*.*
+output/plot/*.*
 
 !output/README.md
+!output/plot/README.md
