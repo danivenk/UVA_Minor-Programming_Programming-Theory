@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 from code.data_loader.load_data import load
 from code.algorithms import Random_Connections, Greedy, Hill_Climber, \
                             Simulated_Annealing
-from code.visualization.plot_lines import plot_map
+from code.visualization.plot_lines import plot_map, plot_iter_graph
 from code.classes import Arg
 
 
@@ -145,6 +145,9 @@ def output(lines, score, scores, algorithm):
 
     # add score
     output_writer.writerow(["score", score])
+
+    if algorithm =="hill_climber" or algorithm == "simulated_annealing":
+        plot_iter_graph(scores, name=algorithm)
 
     # plot scores in histogram
     plt.figure()
